@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Idea &rarr; Video Studio</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+:root{--bg:#0b0d12;--p1:#12151d;--p2:#1a1f2b;--p3:#222836;--line:#2a3142;--txt:#e8ebf1;--dim:#8b93a7;
+--acc:#6366f1;--acc2:#8b5cf6;--ok:#34d399;--warn:#fbbf24;--err:#f87171;--r:14px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:radial-gradient(1200px 600px at 80% -10%,rgba(99,102,241,.12),transparent),
+radial-gradient(900px 500px at -10% 100%,rgba(139,92,246,.08),transparent),var(--bg);
+color:var(--txt);font:14px/1.55 "Segoe UI",system-ui,sans-serif;min-height:100vh}
+.layout{display:flex;min-height:100vh}
+.side{width:220px;background:rgba(13,16,23,.85);border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh}
+.logo{font-size:18px;font-weight:800;letter-spacing:.3px;margin-bottom:4px}
+.logo span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.logo-sub{font-size:11px;color:var(--dim);margin-bottom:26px}
+.nav a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:var(--dim);text-decoration:none;margin-bottom:4px;font-weight:500}
+.nav a.on,.nav a:hover{background:linear-gradient(90deg,rgba(99,102,241,.18),transparent);color:var(--txt)}
+.nav a.on{box-shadow:inset 2px 0 0 var(--acc)}
+.sched-pill{margin-top:22px;padding:10px 12px;border-radius:10px;background:var(--p2);font-size:12px;color:var(--dim)}
+.sched-pill b{display:block;font-size:13px}
+.main{flex:1;padding:26px 30px;max-width:1180px}
+h1{font-size:20px;margin-bottom:18px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
+.card{background:var(--p1);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:18px}
+.card h2{font-size:14px;color:var(--txt);margin-bottom:12px;font-weight:600}
+.card h2 .ic{margin-right:6px}
+label{display:block;font-size:11px;color:var(--dim);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px}
+input,select,textarea{width:100%;background:var(--p2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:9px 11px;font:inherit;outline:none}
+input:focus,select:focus,textarea:focus{border-color:var(--acc)}
+textarea{resize:vertical;min-height:70px}
+.row{display:flex;gap:10px}.row>*{flex:1}
+.btn{background:linear-gradient(90deg,var(--acc),var(--acc2));border:0;color:#fff;border-radius:8px;padding:9px 18px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
+.btn.sec{background:var(--p3);border:1px solid var(--line);font-weight:400}
+.btn.danger{background:transparent;border:1px solid var(--err);color:var(--err)}
+.btn.sm{padding:4px 10px;margin:0;font-size:12px;border-radius:6px}
+.btn:disabled{opacity:.45;cursor:default}
+.stat{background:var(--p1);border:1px solid var(--line);border-radius:var(--r);padding:16px}
+.stat .n{font-size:26px;font-weight:800}
+.stat .l{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;display:inline-block}
+.b-pending{background:rgba(251,191,36,.15);color:var(--warn)}
+.b-processing{background:rgba(99,102,241,.2);color:#a5b4fc}
+.b-completed{background:rgba(52,211,153,.15);color:var(--ok)}
+.b-error{background:rgba(248,113,113,.15);color:var(--err)}
+table{width:100%;border-collapse:collapse}
+th{font-size:11px;color:var(--dim);text-align:left;padding:8px 10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line)}
+td{padding:10px;border-bottom:1px solid rgba(42,49,66,.5);vertical-align:middle}
+tr:hover td{background:rgba(99,102,241,.04)}
+video{width:100%;max-width:420px;border-radius:10px;margin-top:8px;background:#000}
+#log{background:#07090d;border-radius:8px;padding:12px;height:200px;overflow-y:auto;font:12px/1.5 Consolas,monospace;white-space:pre-wrap;color:#93e2a4;display:none;margin-top:12px}
+.status{font-weight:600;margin-top:8px}
+.st-run{color:var(--warn)}.st-done{color:var(--ok)}.st-err{color:var(--err)}
+.idea-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(42,49,66,.5)}
+.idea-item .t{flex:1}
+.idea-item .meta{font-size:11px;color:var(--dim)}
+.mrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,49,66,.5)}
+.empty{color:var(--dim);font-size:13px;padding:14px 4px}
+.scene{border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;background:var(--p2)}
+.scene label{margin:6px 0 2px}
+a{color:#a5b4fc}
+.toast{position:fixed;bottom:22px;right:22px;background:var(--p3);border:1px solid var(--line);padding:12px 18px;border-radius:10px;display:none;z-index:9}
+</style>
+</head>
+<body>
+<div class="layout">
+  <aside class="side">
+    <div class="logo">Idea<span>&rarr;</span>Video</div>
+    <div class="logo-sub">Studio &middot; v2</div>
+    <nav class="nav">
+      <a data-t="dash" class="on" onclick="tab('dash')">&#9636; Dashboard</a>
+      <a data-t="ideas" onclick="tab('ideas')">&#9671; Ideas</a>
+      <a data-t="sched" onclick="tab('sched')">&#9200; Scheduler</a>
+      <a data-t="jobs" onclick="tab('jobs')">&#9654; Jobs</a>
+      <a data-t="music" onclick="tab('music')">&#9835; Music</a>
+      <a data-t="set" onclick="tab('set')">&#9881; Settings</a>
+    </nav>
+    <div class="sched-pill">Scheduler<b id="schedState" style="color:var(--dim)">off</b></div>
+  </aside>
+  <main class="main">
+
+  <!-- DASHBOARD -->
+  <section id="p-dash">
+    <h1>Dashboard</h1>
+    <div class="grid3" id="stats"></div>
+    <div class="grid2" style="margin-top:18px">
+      <div class="card"><h2><span class="ic">&#9200;</span>Queue / recent ideas</h2><div id="dashIdeas"></div></div>
+      <div class="card"><h2><span class="ic">&#9654;</span>Recent videos</h2><div id="dashJobs"></div></div>
+    </div>
+  </section>
+
+  <!-- IDEAS -->
+  <section id="p-ideas" style="display:none">
+    <h1>Ideas</h1>
+    <div class="card">
+      <h2><span class="ic">&#9998;</span>Add ideas (one per line)</h2>
+      <textarea id="ideasBulk" placeholder="Why the Library of Alexandria really burned&#10;The secret history of coffee&#10;How the Suez Canal changed trade"></textarea>
+      <div class="row">
+        <div><label>Mode</label><select id="iMode"><option value="image">Image (fast)</option><option value="video">Video (slow)</option></select></div>
+        <div><label>Format</label><select id="iFmt"><option value="shorts">Shorts 9:16</option><option value="video">Video 16:9</option></select></div>
+        <div><label>Seconds</label><input id="iSec" type="number" value="45"></div>
+      </div>
+      <div class="row">
+        <div><label>Schedule at (optional)</label><input id="iSched" type="datetime-local"></div>
+        <div style="align-self:end"><button class="btn" onclick="addIdeas()">Add to list</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="ic">&#9671;</span>Idea list</h2>
+      <table><thead><tr><th>Idea</th><th>Status</th><th>Scheduled</th><th>Result</th><th></th></tr></thead>
+      <tbody id="ideaRows"></tbody></table>
+    </div>
+  </section>
+
+  <!-- SCHEDULER -->
+  <section id="p-sched" style="display:none">
+    <h1>Scheduler</h1>
+    <div class="card">
+      <h2><span class="ic">&#9200;</span>Settings</h2>
+      <div class="row">
+        <div><label>Enabled</label><select id="sEnabled"><option value="false">Off</option><option value="true">On &mdash; daily run</option></select></div>
+        <div><label>Daily time</label><input id="sTime" type="time" value="09:00"></div>
+      </div>
+      <p class="empty">When ON, all pending ideas without an explicit time are generated one-by-one every day at this time. Ideas with a schedule run exactly at their time. Queue is strictly sequential (GPU safe).</p>
+      <div class="row">
+        <div style="align-self:end"><button class="btn" onclick="saveSched()">Save</button></div>
+        <div style="align-self:end"><button class="btn sec" id="schedBtn" onclick="toggleSched()">Start now</button></div>
+      </div>
+    </div>
+    <div class="card">
+      <h2><span class="ic">&#9679;</span>Live status</h2>
+      <div class="status" id="schedLive">idle</div>
+    </div>
+  </section>
+
+  <!-- JOBS -->
+  <section id="p-jobs" style="display:none">
+    <h1>Jobs</h1>
+    <div class="grid2">
+      <div class="card"><h2>All jobs</h2><div id="jobList"></div></div>
+      <div class="card" id="jobEditor"><div class="empty">Select a job.</div></div>
+    </div>
+  </section>
+
+  <!-- MUSIC -->
+  <section id="p-music" style="display:none">
+    <h1>Music</h1>
+    <div class="card">
+      <h2><span class="ic">&#9835;</span>Background tracks (royalty-free)</h2>
+      <p class="empty">A random track is mixed under narration. Sources: <a href="https://pixabay.com/music/" target="_blank">Pixabay</a> (no attribution) &middot; <a href="https://incompetech.com" target="_blank">Incompetech</a> &middot; <a href="https://studio.youtube.com/channel/music" target="_blank">YT Audio Library</a></p>
+      <input type="file" id="musicFile" accept=".mp3,.wav,.ogg,.m4a,.flac">
+      <button class="btn" onclick="uploadMusic()">Upload</button>
+      <div id="musicList" style="margin-top:12px"></div>
+    </div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section id="p-set" style="display:none">
+    <h1>Settings</h1>
+    <div class="card">
+      <h2><span class="ic">&#9881;</span>Generation</h2>
+      <div class="row">
+        <div><label>TTS voice</label><input id="sVoice"></div>
+        <div><label>TTS rate</label><input id="sRate"></div>
+      </div>
+      <div class="row">
+        <div><label>Music enabled</label><select id="sMusic"><option value="true">Yes</option><option value="false">No</option></select></div>
+        <div><label>Music volume</label><input id="sVol" type="number" step="0.05" min="0" max="1"></div>
+      </div>
+      <div class="row">
+        <div><label>End screen (subscribe card)</label><select id="sEnd"><option value="true">On</option><option value="false">Off</option></select></div>
+        <div><label>Channel name</label><input id="sChannel" placeholder="Your Channel"></div>
+      </div>
+      <div class="row">
+        <div><label>End screen tagline</label><input id="sTagline" placeholder="for more videos like this"></div>
+        <div><label>End screen seconds</label><input id="sEndSec" type="number" value="4" min="2" max="10"></div>
+      </div>
+      <label>Image style</label><textarea id="sStyle"></textarea>
+      <label>Video style</label><textarea id="sStyleV"></textarea>
+      <button class="btn" onclick="saveSettings()">Save settings</button>
+      <span class="status" id="setMsg"></span>
+    </div>
+  </section>
+
+  <div class="card" id="runCard" style="display:none">
+    <h2><span class="ic">&#9889;</span>Run log</h2>
+    <div class="status" id="genStatus"></div>
+    <div id="log"></div>
+  </div>
+
+  <div class="card" id="liveCard" style="display:none">
+    <h2><span class="ic">&#9889;</span>Live generation</h2>
+    <div id="liveTitle" style="font-weight:600;margin-bottom:6px"></div>
+    <div style="background:var(--p2);border-radius:20px;height:10px;overflow:hidden;margin:8px 0">
+      <div id="liveBar" style="height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width 1s"></div>
+    </div>
+    <div class="meta" id="liveStage" style="color:var(--dim);font-size:12px;margin-bottom:6px"></div>
+    <div id="liveLog"></div>
+  </div>
+
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const $ = id => document.getElementById(id);
+let curJob=null, poller=null, curScript=null, curScriptJob=null;
+function tab(t){
+  for (const x of ['dash','ideas','sched','jobs','music','set']) $('p-'+x).style.display = x===t?'':'none';
+  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.t===t));
+  if (t==='dash') loadDash(); if (t==='ideas') loadIdeas(); if (t==='sched') loadSched();
+  if (t==='jobs') loadJobs(); if (t==='music') loadMusic(); if (t==='set') loadSettings();
+}
+function toast(m){ $('toast').textContent=m; $('toast').style.display='block'; setTimeout(()=>$('toast').style.display='none',2500); }
+const STATUS_COLORS={pending:'b-pending',processing:'b-processing',completed:'b-completed',error:'b-error'};
+
+async function loadDash(){
+  const ideas = await (await fetch('/api/ideas')).json();
+  const jobs = await (await fetch('/api/jobs')).json();
+  const n = s => ideas.filter(i=>i.status===s).length;
+  $('stats').innerHTML = `
+    <div class="stat"><div class="n">${n('pending')}</div><div class="l">pending ideas</div></div>
+    <div class="stat"><div class="n">${n('processing')}</div><div class="l">in process</div></div>
+    <div class="stat"><div class="n">${n('completed')}</div><div class="l">completed</div></div>`;
+  $('dashIdeas').innerHTML = ideas.slice(-8).reverse().map(i=>ideaRow(i)).join('')||'<div class="empty">none</div>';
+  $('dashJobs').innerHTML = jobs.filter(j=>j.videos.length).slice(0,5).map(j=>
+    `<div class="idea-item"><span class="t">${j.title||j.job}</span>
+     <video controls src="/api/video/${encodeURIComponent(j.job)}/${encodeURIComponent(j.videos[0])}"></video></div>`).join('')
+    || '<div class="empty">no videos yet</div>';
+  refreshSchedState();
+}
+function ideaRow(i){
+  const v = i.video ? `<a href="#" onclick="return false"><span class="badge b-completed">video ready</span></a>` : '';
+  return `<div class="idea-item"><span class="t">${i.text}<div class="meta">${i.created||''}${i.error?' &middot; '+i.error:''}</div></span>
+    <span class="badge ${STATUS_COLORS[i.status]||''}">${i.status}</span>${v}
+    <span class="meta">${i.scheduled_at||''}</span>
+    <span>
+      <button class="btn sec sm" onclick="runIdea(${i.id})">run</button>
+      <button class="btn danger sm" onclick="delIdea(${i.id})">x</button></span></div>`;
+}
+async function loadIdeas(){ const ideas = await (await fetch('/api/ideas')).json();
+  $('ideaRows').innerHTML = ideas.map(i=>`<tr><td>${i.text}<div class="meta">${i.mode}/${i.format}/${i.seconds}s</div></td>
+    <td><span class="badge ${STATUS_COLORS[i.status]||''}">${i.status}</span></td>
+    <td class="meta">${i.scheduled_at||'&mdash;'}</td>
+    <td>${i.video?'<span class="badge b-completed">ready</span>':(i.error?'<span class="meta">'+i.error.slice(0,80)+'</span>':'&mdash;')}</td>
+    <td><button class="btn sec sm" onclick="runIdea(${i.id})">run</button> <button class="btn danger sm" onclick="delIdea(${i.id})">x</button></td></tr>`).join('')
+    || '<tr><td colspan="5" class="empty">no ideas yet</td></tr>'; }
+async function addIdeas(){
+  const texts = $('ideasBulk').value.split('\n').map(s=>s.trim()).filter(Boolean);
+  if (!texts.length) return toast('add at least one idea');
+  await fetch('/api/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    ideas:texts, mode:$('iMode').value, format:$('iFmt').value, seconds:+$('iSec').value,
+    scheduled_at:$('iSched').value? new Date($('iSched').value).toISOString().slice(0,19) : null})});
+  $('ideasBulk').value=''; $('iSched').value=''; toast('added'); loadIdeas();
+}
+async function runIdea(id){ await fetch(`/api/ideas/${id}/run`,{method:'POST'}); toast('queued for generation'); loadIdeas(); }
+async function delIdea(id){ await fetch(`/api/ideas/${id}`,{method:'DELETE'}); loadIdeas(); }
+
+async function loadSched(){
+  const c = await (await fetch('/api/scheduler')).json();
+  $('sEnabled').value=String(!!c.enabled); $('sTime').value=c.daily_time;
+  refreshSchedState(c);
+}
+function refreshSchedState(c){
+  fetch('/api/scheduler').then(r=>r.json()).then(c=>{
+    $('schedState').textContent = c.running ? (c.enabled?'on (daily '+c.daily_time+')':'on (queue only)') : 'off';
+    $('schedState').style.color = c.running?'var(--ok)':'var(--dim)';
+    $('schedBtn').textContent = c.running?'Stop':'Start now';
+    $('schedLive').textContent = c.running ? 'running &mdash; picks next pending idea automatically' : 'stopped';
+  });
+}
+async function saveSched(){
+  await fetch('/api/scheduler',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    enabled:$('sEnabled').value==='true', daily_time:$('sTime').value||'09:00'})});
+  toast('saved'); refreshSchedState();
+}
+async function toggleSched(){
+  const c = await (await fetch('/api/scheduler')).json();
+  await fetch('/api/scheduler',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:c.running?'stop':'start'})});
+  refreshSchedState();
+}
+
+async function loadJobs(){
+  const jobs = await (await fetch('/api/jobs')).json();
+  $('jobList').innerHTML = jobs.map(j=>`<div class="idea-item" style="cursor:pointer" onclick="openJob('${j.job}')">
+    <span class="t">${j.title||j.job}</span><span class="meta">${j.videos.length?'<span class="badge b-completed">'+j.videos.length+'</span>':''}</span></div>`).join('')||'<div class="empty">none</div>';
+}
+async function openJob(name){
+  const j = await (await fetch('/api/job/'+name)).json();
+  curScript=j.script; curScriptJob=name;
+  let h=`<h2>${name}</h2>`;
+  for (const v of j.videos) h+=`<video controls src="/api/video/${encodeURIComponent(name)}/${encodeURIComponent(v)}"></video><div class="meta">${v}</div>`;
+  if (j.script){
+    h+=`<div class="row" style="margin-top:10px"><input id="editTitle" value="${(j.script.title||'').replace(/"/g,'&quot;')}">
+        <button class="btn sec sm" style="margin:0" onclick="saveScript()">save script</button>
+        <button class="btn sm" style="margin:0" onclick="rerender()">re-render</button></div>`;
+    h+=j.script.scenes.map((s,i)=>`<div class="scene"><span class="badge b-processing">scene ${i+1}</span>
+      <button class="btn sec sm" style="margin:0;float:right" onclick="regenScene(${i})">regen visual</button>
+      <label>Narration</label><textarea id="narr${i}">${s.narration}</textarea>
+      <label>Visual prompt</label><textarea id="vis${i}">${s.visual_prompt}</textarea></div>`).join('');
+  }
+  $('jobEditor').innerHTML=h;
+}
+async function saveScript(){
+  curScript.title=$('editTitle').value;
+  curScript.scenes.forEach((s,i)=>{s.narration=$('narr'+i).value;s.visual_prompt=$('vis'+i).value;});
+  await fetch('/api/job/'+curScriptJob+'/save_script',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(curScript)});
+  toast('script saved');
+}
+async function rerender(){
+  $('runCard').style.display='block'; $('log').style.display='block'; $('log').textContent='';
+  $('genStatus').textContent='re-rendering...'; $('genStatus').className='status st-run';
+  await fetch('/api/job/'+curScriptJob+'/rerender',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
+  pollStatus(curScriptJob);
+}
+async function regenScene(i){
+  await fetch('/api/job/'+curScriptJob+'/regen_scene',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scene:i})});
+  toast('visual deleted — rerun the idea to regenerate');
+}
+function pollStatus(job){
+  clearInterval(poller);
+  poller=setInterval(async()=>{
+    const j=await (await fetch('/api/status/'+job)).json();
+    $('log').textContent=j.log.join('\n'); $('log').scrollTop=1e9;
+    $('genStatus').textContent=j.status; $('genStatus').className='status '+(j.status==='done'?'st-done':j.status==='error'?'st-err':'st-run');
+    if (j.status==='done'||j.status==='error'){clearInterval(poller); loadJobs();}
+  },1500);
+}
+
+async function loadMusic(){
+  const files=await (await fetch('/api/music')).json();
+  $('musicList').innerHTML=files.map(f=>`<div class="mrow"><span>${f}</span>
+    <button class="btn danger sm" onclick="delMusic('${f}')">delete</button></div>`).join('')||'<div class="empty">no tracks</div>';
+}
+async function uploadMusic(){
+  const f=$('musicFile').files[0]; if(!f) return toast('pick a file');
+  const fd=new FormData(); fd.append('file',f);
+  await fetch('/api/music/upload',{method:'POST',body:fd}); $('musicFile').value=''; loadMusic();
+}
+async function delMusic(n){
+  await fetch('/api/music/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})}); loadMusic();
+}
+async function loadSettings(){
+  const c=await (await fetch('/api/config')).json();
+  $('sVoice').value=c.tts.voice; $('sRate').value=c.tts.rate;
+  $('sMusic').value=String(!!c.video.music); $('sVol').value=c.video.music_volume;
+  const es=c.video.end_screen||{};
+  $('sEnd').value=String(es.enabled!==false); $('sChannel').value=es.channel||'';
+  $('sTagline').value=es.tagline||'for more videos like this'; $('sEndSec').value=es.seconds||4;
+  $('sStyle').value=c.video.style; $('sStyleV').value=c.video.style_video;
+}
+async function saveSettings(){
+  await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
+    tts:{voice:$('sVoice').value,rate:$('sRate').value},
+    video:{music:$('sMusic').value==='true',music_volume:+$('sVol').value,style:$('sStyle').value,style_video:$('sStyleV').value,
+      end_screen:{enabled:$('sEnd').value==='true',channel:$('sChannel').value,tagline:$('sTagline').value,seconds:+$('sEndSec').value}}})});
+  $('setMsg').textContent='saved'; $('setMsg').className='status st-done'; setTimeout(()=>$('setMsg').textContent='',2000);
+}
+refreshSchedState(); loadDash();
+setInterval(()=>{ if(!$('p-dash').style.display) loadDash(); },10000);
+
+// ---- live generation progress ----
+let livePoller = setInterval(pollLive, 1500);
+function pollLive(){
+  fetch('/api/scheduler/live').then(r=>r.json()).then(s=>{
+    const active = s.running && s.current;
+    $('liveCard').style.display = active ? '' : 'none';
+    if (!active) return;
+    $('liveTitle').textContent = s.current.text;
+    $('liveBar').style.width = (s.progress||0) + '%';
+    $('liveStage').textContent = (s.stage||'starting...') + '  \u2014  ' + (s.progress||0) + '%';
+    $('liveLog').innerHTML = s.logs.map(l=>`<div style="font:12px/1.5 Consolas,monospace;color:#93e2a4">${l[0].slice(11)} ${l[1]}</div>`).join('');
+  }).catch(()=>{});
+}
+pollLive();
+</script>
+</body>
+</html>
