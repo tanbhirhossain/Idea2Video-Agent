@@ -1,6 +1,7 @@
 ollama:
   host: http://localhost:11434
   model: qwen3.5:latest
+  think: false
 comfy:
   host: http://127.0.0.1:8188
   timeout_s: 1800
@@ -72,6 +73,9 @@ video:
   - fadeblack
   - zoomin
   scene_seconds: 6
+  narration_wpm: 190
+  duration_tolerance_s: 2.0
+  duration_tolerance_ratio: 0.04
   style: cinematic lighting, ultra detailed, 4k, professional color grading
   style_video: Realistic live action cinematic look, practical film photography, anamorphic
     lens, shallow depth of field, film grain, restrained premium colour grading, natural

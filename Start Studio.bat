@@ -1,6 +1,6 @@
 @echo off
 title Idea2Video Studio
-cd /d "S:\VidTools\idea2video (1)\idea2video"
+cd /d "%~dp0"
 
 echo ============================================
 echo   Idea2Video Studio - starting services...
