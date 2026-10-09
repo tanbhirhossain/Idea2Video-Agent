@@ -1,382 +1,751 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
-<meta charset="utf-8">
-<title>Idea &rarr; Video Studio</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<style>
-:root{--bg:#0b0d12;--p1:#12151d;--p2:#1a1f2b;--p3:#222836;--line:#2a3142;--txt:#e8ebf1;--dim:#8b93a7;
---acc:#6366f1;--acc2:#8b5cf6;--ok:#34d399;--warn:#fbbf24;--err:#f87171;--r:14px}
-*{box-sizing:border-box;margin:0;padding:0}
-body{background:radial-gradient(1200px 600px at 80% -10%,rgba(99,102,241,.12),transparent),
-radial-gradient(900px 500px at -10% 100%,rgba(139,92,246,.08),transparent),var(--bg);
-color:var(--txt);font:14px/1.55 "Segoe UI",system-ui,sans-serif;min-height:100vh}
-.layout{display:flex;min-height:100vh}
-.side{width:220px;background:rgba(13,16,23,.85);border-right:1px solid var(--line);padding:22px 14px;position:sticky;top:0;height:100vh}
-.logo{font-size:18px;font-weight:800;letter-spacing:.3px;margin-bottom:4px}
-.logo span{background:linear-gradient(90deg,var(--acc),var(--acc2));-webkit-background-clip:text;background-clip:text;color:transparent}
-.logo-sub{font-size:11px;color:var(--dim);margin-bottom:26px}
-.nav a{display:flex;gap:10px;align-items:center;padding:10px 12px;border-radius:10px;color:var(--dim);text-decoration:none;margin-bottom:4px;font-weight:500}
-.nav a.on,.nav a:hover{background:linear-gradient(90deg,rgba(99,102,241,.18),transparent);color:var(--txt)}
-.nav a.on{box-shadow:inset 2px 0 0 var(--acc)}
-.sched-pill{margin-top:22px;padding:10px 12px;border-radius:10px;background:var(--p2);font-size:12px;color:var(--dim)}
-.sched-pill b{display:block;font-size:13px}
-.main{flex:1;padding:26px 30px;max-width:1180px}
-h1{font-size:20px;margin-bottom:18px}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:18px}
-.grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-@media(max-width:900px){.grid2,.grid3{grid-template-columns:1fr}}
-.card{background:var(--p1);border:1px solid var(--line);border-radius:var(--r);padding:18px;margin-bottom:18px}
-.card h2{font-size:14px;color:var(--txt);margin-bottom:12px;font-weight:600}
-.card h2 .ic{margin-right:6px}
-label{display:block;font-size:11px;color:var(--dim);margin:10px 0 4px;text-transform:uppercase;letter-spacing:.5px}
-input,select,textarea{width:100%;background:var(--p2);border:1px solid var(--line);color:var(--txt);border-radius:8px;padding:9px 11px;font:inherit;outline:none}
-input:focus,select:focus,textarea:focus{border-color:var(--acc)}
-textarea{resize:vertical;min-height:70px}
-.row{display:flex;gap:10px}.row>*{flex:1}
-.btn{background:linear-gradient(90deg,var(--acc),var(--acc2));border:0;color:#fff;border-radius:8px;padding:9px 18px;font:inherit;font-weight:600;cursor:pointer;margin-top:12px}
-.btn.sec{background:var(--p3);border:1px solid var(--line);font-weight:400}
-.btn.danger{background:transparent;border:1px solid var(--err);color:var(--err)}
-.btn.sm{padding:4px 10px;margin:0;font-size:12px;border-radius:6px}
-.btn:disabled{opacity:.45;cursor:default}
-.stat{background:var(--p1);border:1px solid var(--line);border-radius:var(--r);padding:16px}
-.stat .n{font-size:26px;font-weight:800}
-.stat .l{font-size:11px;color:var(--dim);text-transform:uppercase;letter-spacing:.5px}
-.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:600;display:inline-block}
-.b-pending{background:rgba(251,191,36,.15);color:var(--warn)}
-.b-processing{background:rgba(99,102,241,.2);color:#a5b4fc}
-.b-completed{background:rgba(52,211,153,.15);color:var(--ok)}
-.b-error{background:rgba(248,113,113,.15);color:var(--err)}
-table{width:100%;border-collapse:collapse}
-th{font-size:11px;color:var(--dim);text-align:left;padding:8px 10px;text-transform:uppercase;letter-spacing:.5px;border-bottom:1px solid var(--line)}
-td{padding:10px;border-bottom:1px solid rgba(42,49,66,.5);vertical-align:middle}
-tr:hover td{background:rgba(99,102,241,.04)}
-video{width:100%;max-width:420px;border-radius:10px;margin-top:8px;background:#000}
-#log{background:#07090d;border-radius:8px;padding:12px;height:200px;overflow-y:auto;font:12px/1.5 Consolas,monospace;white-space:pre-wrap;color:#93e2a4;display:none;margin-top:12px}
-.status{font-weight:600;margin-top:8px}
-.st-run{color:var(--warn)}.st-done{color:var(--ok)}.st-err{color:var(--err)}
-.idea-item{display:flex;justify-content:space-between;gap:10px;align-items:center;padding:10px 12px;border-bottom:1px solid rgba(42,49,66,.5)}
-.idea-item .t{flex:1}
-.idea-item .meta{font-size:11px;color:var(--dim)}
-.mrow{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid rgba(42,49,66,.5)}
-.empty{color:var(--dim);font-size:13px;padding:14px 4px}
-.scene{border:1px solid var(--line);border-radius:10px;padding:12px;margin:10px 0;background:var(--p2)}
-.scene label{margin:6px 0 2px}
-a{color:#a5b4fc}
-.toast{position:fixed;bottom:22px;right:22px;background:var(--p3);border:1px solid var(--line);padding:12px 18px;border-radius:10px;display:none;z-index:9}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#080b12">
+  <title>Idea → Video Studio</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='app.css') }}">
 </head>
-<body>
-<div class="layout">
-  <aside class="side">
-    <div class="logo">Idea<span>&rarr;</span>Video</div>
-    <div class="logo-sub">Studio &middot; v2</div>
-    <nav class="nav">
-      <a data-t="dash" class="on" onclick="tab('dash')">&#9636; Dashboard</a>
-      <a data-t="ideas" onclick="tab('ideas')">&#9671; Ideas</a>
-      <a data-t="sched" onclick="tab('sched')">&#9200; Scheduler</a>
-      <a data-t="jobs" onclick="tab('jobs')">&#9654; Jobs</a>
-      <a data-t="music" onclick="tab('music')">&#9835; Music</a>
-      <a data-t="set" onclick="tab('set')">&#9881; Settings</a>
+<body class="app-backdrop min-h-screen text-slate-100 antialiased">
+  <div id="mobileBackdrop" class="fixed inset-0 z-40 hidden bg-black/65 backdrop-blur-sm lg:hidden"></div>
+
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 flex w-[264px] -translate-x-full flex-col border-r border-white/5 bg-[#090d15]/95 px-4 py-5 backdrop-blur-xl transition-transform duration-200 lg:translate-x-0">
+    <div class="flex items-center gap-3 px-2 pb-7">
+      <div class="relative grid h-10 w-10 place-items-center overflow-hidden rounded-2xl bg-gradient-to-br from-violet-500 to-cyan-400 shadow-lg shadow-violet-500/20">
+        <svg viewBox="0 0 24 24" aria-hidden="true" class="h-5 w-5 fill-white"><path d="M5 4.75A1.75 1.75 0 0 1 7.6 3.23l11.2 6.47a2.65 2.65 0 0 1 0 4.6L7.6 20.77A1.75 1.75 0 0 1 5 19.25V4.75Z"/></svg>
+      </div>
+      <div class="min-w-0">
+        <div class="truncate text-[15px] font-bold tracking-tight text-white">Idea <span class="text-violet">to</span> Video</div>
+        <div class="mt-0.5 text-[10px] font-semibold uppercase tracking-[.2em] text-slate-500">Creative studio</div>
+      </div>
+      <button id="closeMobileMenu" class="btn-quiet ml-auto !p-2 lg:hidden" type="button" aria-label="Close menu">×</button>
+    </div>
+
+    <div class="px-3 pb-2 text-[10px] font-bold uppercase tracking-[.18em] text-slate-600">Workspace</div>
+    <nav class="flex flex-col gap-1" aria-label="Main navigation">
+      <button class="nav-link active flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="overview">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="4" rx="1.5"/><rect x="13.5" y="9.5" width="7" height="11" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+        Overview
+      </button>
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="create">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3.5v17M3.5 12h17"/><circle cx="12" cy="12" r="9"/></svg>
+        Create video <span class="ml-auto rounded-md bg-violet/15 px-1.5 py-0.5 text-[9px] font-bold uppercase tracking-wide text-violet">New</span>
+      </button>
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="queue">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M8 6h12M8 12h12M8 18h12"/><circle cx="4" cy="6" r=".8" fill="currentColor"/><circle cx="4" cy="12" r=".8" fill="currentColor"/><circle cx="4" cy="18" r=".8" fill="currentColor"/></svg>
+        Idea queue
+        <span id="queueCount" class="ml-auto rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">0</span>
+      </button>
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="library">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3.5" y="4" width="17" height="16" rx="2.2"/><path d="m10 9 5 3-5 3V9Z" fill="currentColor" stroke="none"/></svg>
+        Video library
+      </button>
     </nav>
-    <div class="sched-pill">Scheduler<b id="schedState" style="color:var(--dim)">off</b></div>
+
+    <div class="mt-7 px-3 pb-2 text-[10px] font-bold uppercase tracking-[.18em] text-slate-600">Studio tools</div>
+    <nav class="flex flex-col gap-1" aria-label="Studio tools">
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="scheduler">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="8.5"/><path d="M12 7v5l3.5 2"/></svg>
+        Scheduler
+      </button>
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="music">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg>
+        Music library
+      </button>
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="settings">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3.1 1.3v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3.1-1.3l-.1.1a1.8 1.8 0 1 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-1.3-3.1h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 1.3-3.1l-.1-.1a1.8 1.8 0 1 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3.1-1.3v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3.1 1.3l.1-.1a1.8 1.8 0 1 1 2.5 2.5l.1.1a1.8 1.8 0 0 0 1.3 3.1h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1.3 3.1Z"/></svg>
+        Settings
+      </button>
+      <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="admin">
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3.5 19 6v5.2c0 4.4-2.8 7.5-7 9.3-4.2-1.8-7-4.9-7-9.3V6l7-2.5Z"/><path d="m9 12 2 2 4-4"/></svg>
+        Admin panel
+      </button>
+    </nav>
+
+    <div class="mt-auto">
+      <div class="mb-3 rounded-2xl border border-white/[.07] bg-white/[.025] p-3.5">
+        <div class="flex items-center justify-between gap-3">
+          <div>
+            <div class="text-[11px] font-semibold text-slate-300">Scheduler</div>
+            <div id="schedState" class="mt-1 text-[11px] text-slate-500">Checking status…</div>
+          </div>
+          <span id="schedDot" class="h-2 w-2 rounded-full bg-slate-600"></span>
+        </div>
+        <button class="btn-secondary mt-3 w-full !py-2 text-[11px]" type="button" data-nav="scheduler">Manage queue</button>
+      </div>
+      <div class="flex items-center gap-2.5 px-2 pt-2">
+        <div class="grid h-8 w-8 place-items-center rounded-full bg-gradient-to-br from-violet-400/30 to-cyan-300/20 text-[11px] font-bold text-violet">AI</div>
+        <div class="min-w-0 flex-1"><div class="truncate text-xs font-semibold text-slate-200">Local workspace</div><div class="text-[10px] text-slate-500">Private generation</div></div>
+        <span class="h-1.5 w-1.5 rounded-full bg-mint shadow-[0_0_10px_#71e2bd]"></span>
+      </div>
+    </div>
   </aside>
-  <main class="main">
 
-  <!-- DASHBOARD -->
-  <section id="p-dash">
-    <h1>Dashboard</h1>
-    <div class="grid3" id="stats"></div>
-    <div class="grid2" style="margin-top:18px">
-      <div class="card"><h2><span class="ic">&#9200;</span>Queue / recent ideas</h2><div id="dashIdeas"></div></div>
-      <div class="card"><h2><span class="ic">&#9654;</span>Recent videos</h2><div id="dashJobs"></div></div>
-    </div>
-  </section>
+  <div id="appMain" class="min-h-screen lg:pl-[264px]">
+    <header class="sticky top-0 z-30 border-b border-white/[.055] bg-[#080b12]/80 px-4 py-3 backdrop-blur-xl sm:px-7 lg:px-10">
+      <div class="mx-auto flex max-w-[1480px] items-center justify-between gap-4">
+        <div class="flex min-w-0 items-center gap-3">
+          <button id="openMobileMenu" class="btn-quiet !p-2 lg:hidden" type="button" aria-label="Open menu">
+            <svg viewBox="0 0 24 24" class="h-5 w-5" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+          </button>
+          <div class="min-w-0">
+            <div id="pageKicker" class="text-[9px] font-bold uppercase tracking-[.2em] text-slate-600">Workspace</div>
+            <div id="pageTitle" class="truncate text-sm font-semibold text-slate-200">Overview</div>
+          </div>
+        </div>
+        <div class="flex items-center gap-2 sm:gap-3">
+          <div class="hidden items-center gap-2 rounded-full border border-white/[.07] bg-white/[.025] px-3 py-1.5 sm:flex">
+            <span class="h-1.5 w-1.5 rounded-full bg-mint"></span><span class="text-[10px] font-semibold tracking-wide text-slate-400">LOCAL STUDIO</span>
+          </div>
+          <button class="btn-primary !px-3 !py-2 text-xs sm:!px-4" type="button" data-nav="create">
+            <span class="text-base leading-none">＋</span><span class="hidden sm:inline">New video</span><span class="sm:hidden">Create</span>
+          </button>
+        </div>
+      </div>
+    </header>
 
-  <!-- IDEAS -->
-  <section id="p-ideas" style="display:none">
-    <h1>Ideas</h1>
-    <div class="card">
-      <h2><span class="ic">&#9998;</span>Add ideas (one per line)</h2>
-      <textarea id="ideasBulk" placeholder="Why the Library of Alexandria really burned&#10;The secret history of coffee&#10;How the Suez Canal changed trade"></textarea>
-      <div class="row">
-        <div><label>Mode</label><select id="iMode"><option value="image">Image (fast)</option><option value="video">Video (slow)</option></select></div>
-        <div><label>Format</label><select id="iFmt"><option value="shorts">Shorts 9:16</option><option value="video">Video 16:9</option></select></div>
-        <div><label>Seconds</label><input id="iSec" type="number" value="45"></div>
-      </div>
-      <div class="row">
-        <div><label>Schedule at (optional)</label><input id="iSched" type="datetime-local"></div>
-        <div style="align-self:end"><button class="btn" onclick="addIdeas()">Add to list</button></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2><span class="ic">&#9671;</span>Idea list</h2>
-      <table><thead><tr><th>Idea</th><th>Status</th><th>Scheduled</th><th>Result</th><th></th></tr></thead>
-      <tbody id="ideaRows"></tbody></table>
-    </div>
-  </section>
+    <main class="mx-auto max-w-[1480px] px-4 py-6 sm:px-7 sm:py-8 lg:px-10 lg:py-10">
+      <!-- Overview -->
+      <section class="page-view" data-page-view="overview">
+        <div class="mb-7 flex flex-col justify-between gap-5 sm:flex-row sm:items-end">
+          <div>
+            <div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Your workspace</div>
+            <h1 class="text-3xl font-semibold tracking-[-.04em] text-white sm:text-[38px]">Make the idea <span class="bg-gradient-to-r from-violet-300 to-cyan-300 bg-clip-text text-transparent">the story.</span></h1>
+            <p class="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Build a complete video from a single idea—structured narration, scene visuals, voiceover, and a finished cut.</p>
+          </div>
+          <button class="btn-primary shrink-0" type="button" data-nav="create"><span>＋</span> Create a video</button>
+        </div>
 
-  <!-- SCHEDULER -->
-  <section id="p-sched" style="display:none">
-    <h1>Scheduler</h1>
-    <div class="card">
-      <h2><span class="ic">&#9200;</span>Settings</h2>
-      <div class="row">
-        <div><label>Enabled</label><select id="sEnabled"><option value="false">Off</option><option value="true">On &mdash; daily run</option></select></div>
-        <div><label>Daily time</label><input id="sTime" type="time" value="09:00"></div>
-      </div>
-      <p class="empty">When ON, all pending ideas without an explicit time are generated one-by-one every day at this time. Ideas with a schedule run exactly at their time. Queue is strictly sequential (GPU safe).</p>
-      <div class="row">
-        <div style="align-self:end"><button class="btn" onclick="saveSched()">Save</button></div>
-        <div style="align-self:end"><button class="btn sec" id="schedBtn" onclick="toggleSched()">Start now</button></div>
-      </div>
-    </div>
-    <div class="card">
-      <h2><span class="ic">&#9679;</span>Live status</h2>
-      <div class="status" id="schedLive">idle</div>
-    </div>
-  </section>
+        <div id="stats" class="mb-5 grid grid-cols-2 gap-3 xl:grid-cols-4">
+          <div class="panel animate-pulse p-4"><div class="h-3 w-20 rounded bg-white/5"></div><div class="mt-4 h-7 w-12 rounded bg-white/5"></div></div>
+          <div class="panel animate-pulse p-4"><div class="h-3 w-20 rounded bg-white/5"></div><div class="mt-4 h-7 w-12 rounded bg-white/5"></div></div>
+          <div class="panel animate-pulse p-4"><div class="h-3 w-20 rounded bg-white/5"></div><div class="mt-4 h-7 w-12 rounded bg-white/5"></div></div>
+          <div class="panel animate-pulse p-4"><div class="h-3 w-20 rounded bg-white/5"></div><div class="mt-4 h-7 w-12 rounded bg-white/5"></div></div>
+        </div>
 
-  <!-- JOBS -->
-  <section id="p-jobs" style="display:none">
-    <h1>Jobs</h1>
-    <div class="grid2">
-      <div class="card"><h2>All jobs</h2><div id="jobList"></div></div>
-      <div class="card" id="jobEditor"><div class="empty">Select a job.</div></div>
-    </div>
-  </section>
+        <div id="liveCard" class="panel mb-5 hidden overflow-hidden p-4 sm:p-5">
+          <div class="mb-3 flex flex-wrap items-start justify-between gap-3">
+            <div class="flex items-start gap-3">
+              <div class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-violet/15 text-violet">✦</div>
+              <div><div class="text-[10px] font-bold uppercase tracking-[.16em] text-violet">Live generation</div><div id="liveTitle" class="mt-1 max-w-3xl text-sm font-semibold text-slate-100"></div></div>
+            </div>
+            <span id="liveStage" class="text-xs text-slate-400">Starting…</span>
+          </div>
+          <div class="progress-track"><div id="liveBar" class="progress-fill w-0"></div></div>
+          <div id="liveLog" class="mt-3 max-h-32 overflow-auto"></div>
+        </div>
 
-  <!-- MUSIC -->
-  <section id="p-music" style="display:none">
-    <h1>Music</h1>
-    <div class="card">
-      <h2><span class="ic">&#9835;</span>Background tracks (royalty-free)</h2>
-      <p class="empty">A random track is mixed under narration. Sources: <a href="https://pixabay.com/music/" target="_blank">Pixabay</a> (no attribution) &middot; <a href="https://incompetech.com" target="_blank">Incompetech</a> &middot; <a href="https://studio.youtube.com/channel/music" target="_blank">YT Audio Library</a></p>
-      <input type="file" id="musicFile" accept=".mp3,.wav,.ogg,.m4a,.flac">
-      <button class="btn" onclick="uploadMusic()">Upload</button>
-      <div id="musicList" style="margin-top:12px"></div>
-    </div>
-  </section>
+        <div class="grid gap-5 xl:grid-cols-[1.03fr_.97fr]">
+          <div class="panel min-w-0 p-4 sm:p-5">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div><div class="text-sm font-semibold text-slate-100">Idea queue</div><div class="mt-1 text-xs text-slate-500">Recently added and in progress</div></div>
+              <button class="btn-quiet text-xs" type="button" data-nav="queue">View queue <span aria-hidden="true">→</span></button>
+            </div>
+            <div id="dashIdeas" class="divide-y divide-white/[.05]"><div class="py-8 text-center text-sm text-slate-500">Loading your ideas…</div></div>
+          </div>
+          <div class="panel min-w-0 p-4 sm:p-5">
+            <div class="mb-4 flex items-center justify-between gap-3">
+              <div><div class="text-sm font-semibold text-slate-100">Latest videos</div><div class="mt-1 text-xs text-slate-500">Finished exports from your studio</div></div>
+              <button class="btn-quiet text-xs" type="button" data-nav="library">Open library <span aria-hidden="true">→</span></button>
+            </div>
+            <div id="dashJobs" class="grid gap-3 sm:grid-cols-2 xl:grid-cols-1 2xl:grid-cols-2"><div class="col-span-full py-8 text-center text-sm text-slate-500">Your finished videos will appear here.</div></div>
+          </div>
+        </div>
 
-  <!-- SETTINGS -->
-  <section id="p-set" style="display:none">
-    <h1>Settings</h1>
-    <div class="card">
-      <h2><span class="ic">&#9881;</span>Generation</h2>
-      <div class="row">
-        <div><label>TTS voice</label><input id="sVoice"></div>
-        <div><label>TTS rate</label><input id="sRate"></div>
-      </div>
-      <div class="row">
-        <div><label>Music enabled</label><select id="sMusic"><option value="true">Yes</option><option value="false">No</option></select></div>
-        <div><label>Music volume</label><input id="sVol" type="number" step="0.05" min="0" max="1"></div>
-      </div>
-      <div class="row">
-        <div><label>End screen (subscribe card)</label><select id="sEnd"><option value="true">On</option><option value="false">Off</option></select></div>
-        <div><label>Channel name</label><input id="sChannel" placeholder="Your Channel"></div>
-      </div>
-      <div class="row">
-        <div><label>End screen tagline</label><input id="sTagline" placeholder="for more videos like this"></div>
-        <div><label>End screen seconds</label><input id="sEndSec" type="number" value="4" min="2" max="10"></div>
-      </div>
-      <label>Image style</label><textarea id="sStyle"></textarea>
-      <label>Video style</label><textarea id="sStyleV"></textarea>
-      <button class="btn" onclick="saveSettings()">Save settings</button>
-      <span class="status" id="setMsg"></span>
-    </div>
-  </section>
+        <div class="grain panel relative mt-5 overflow-hidden p-5 sm:p-7">
+          <div class="absolute -right-8 -top-20 h-52 w-52 rounded-full bg-violet/10 blur-3xl"></div>
+          <div class="relative flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+            <div class="max-w-2xl"><div class="text-[10px] font-bold uppercase tracking-[.18em] text-cyan">Story-first generation</div><h2 class="mt-2 text-xl font-semibold tracking-tight text-white">A real beginning. A complete ending.</h2><p class="mt-2 text-sm leading-6 text-slate-400">Scripts now dedicate 15% to the opening, 70% to the idea itself, and 15% to a clear resolution. Voiceover is measured and tuned against your requested runtime.</p></div>
+            <button class="btn-secondary relative shrink-0" type="button" data-nav="create">Start with an idea <span>→</span></button>
+          </div>
+        </div>
+      </section>
 
-  <div class="card" id="runCard" style="display:none">
-    <h2><span class="ic">&#9889;</span>Run log</h2>
-    <div class="status" id="genStatus"></div>
-    <div id="log"></div>
+      <!-- Create -->
+      <section class="page-view hidden" data-page-view="create">
+        <div class="mb-7">
+          <div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> New project</div>
+          <h1 class="text-3xl font-semibold tracking-[-.04em] text-white sm:text-[36px]">Create a video</h1>
+          <p class="mt-2 text-sm text-slate-400">Start with a topic, moment, question, or story you want to tell.</p>
+        </div>
+        <div class="grid items-start gap-5 xl:grid-cols-[minmax(0,1fr)_340px]">
+          <form id="createForm" class="panel p-4 sm:p-6">
+            <label for="ideaInput" class="mb-2 block text-xs font-semibold text-slate-200">Your idea <span class="text-rose">*</span></label>
+            <textarea id="ideaInput" class="input-control" required maxlength="4000" placeholder="Example: How a small engineering decision changed the course of the Apollo 13 mission…"></textarea>
+            <div class="mt-2 flex flex-wrap justify-between gap-2 text-[11px] text-slate-500"><span>Tip: a focused idea usually makes a stronger story.</span><span id="ideaCount">0 / 4000</span></div>
+
+            <div class="mt-6 grid gap-4 sm:grid-cols-2">
+              <div><label for="createMode" class="mb-2 block text-xs font-semibold text-slate-300">Visual mode</label><select id="createMode" class="input-control"><option value="image">AI stills with cinematic motion</option><option value="video">AI-generated video clips</option></select></div>
+              <div><label for="createFormat" class="mb-2 block text-xs font-semibold text-slate-300">Frame format</label><select id="createFormat" class="input-control"><option value="shorts">Vertical · Shorts / Reels</option><option value="video">Landscape · YouTube</option></select></div>
+              <div><label for="createSeconds" class="mb-2 block text-xs font-semibold text-slate-300">Target length</label><div class="relative"><input id="createSeconds" class="input-control pr-16" type="number" value="45" min="10" max="900" step="1" required><span class="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-500">seconds</span></div></div>
+              <div><label for="createLanguage" class="mb-2 block text-xs font-semibold text-slate-300">Narration language</label><input id="createLanguage" class="input-control" value="English" placeholder="English"></div>
+            </div>
+            <div class="mt-4 flex items-start gap-2 rounded-xl border border-cyan/10 bg-cyan/[.04] px-3.5 py-3 text-[11px] leading-5 text-slate-400"><span class="mt-0.5 text-cyan">ⓘ</span><span>Runtime is a target for the finished export. The studio budgets for transitions and the optional outro, measures the generated voiceover, and refines the script if it runs short or long.</span></div>
+            <div class="mt-6 flex flex-col-reverse gap-3 border-t border-white/[.06] pt-5 sm:flex-row sm:items-center sm:justify-between">
+              <span class="text-[11px] text-slate-500">Your story arc: <span class="font-semibold text-slate-300">15% opening · 70% core · 15% resolution</span></span>
+              <button id="generateBtn" class="btn-primary min-w-44" type="submit"><span>✦</span> Generate video</button>
+            </div>
+          </form>
+          <aside class="space-y-4">
+            <div class="panel p-4 sm:p-5"><div class="mb-3 flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-violet/15 text-violet">01</span><h2 class="text-sm font-semibold text-slate-100">A focused opening</h2></div><p class="text-xs leading-5 text-slate-400">Begin inside the idea. No greeting, slow preamble, or unrelated context.</p></div>
+            <div class="panel p-4 sm:p-5"><div class="mb-3 flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-cyan/10 text-cyan">02</span><h2 class="text-sm font-semibold text-slate-100">The idea is the content</h2></div><p class="text-xs leading-5 text-slate-400">Most of the runtime is dedicated to relevant events, evidence, steps, and stakes.</p></div>
+            <div class="panel p-4 sm:p-5"><div class="mb-3 flex items-center gap-2"><span class="grid h-8 w-8 place-items-center rounded-lg bg-mint/10 text-mint">03</span><h2 class="text-sm font-semibold text-slate-100">A satisfying close</h2></div><p class="text-xs leading-5 text-slate-400">The final section resolves the opening and lands on a complete sentence.</p></div>
+          </aside>
+        </div>
+        <div id="runCard" class="panel mt-5 hidden p-4 sm:p-5">
+          <div class="mb-3 flex flex-wrap items-start justify-between gap-3"><div><div class="text-[10px] font-bold uppercase tracking-[.17em] text-violet">Generation progress</div><h2 id="genTitle" class="mt-1 text-sm font-semibold text-white">Preparing your video…</h2></div><span id="genStatus" class="badge badge-processing">queued</span></div>
+          <div id="log" class="hidden"></div>
+          <div id="finalResult" class="mt-4 hidden rounded-xl border border-mint/15 bg-mint/[.05] p-3 text-sm text-mint"></div>
+        </div>
+      </section>
+
+      <!-- Queue -->
+      <section class="page-view hidden" data-page-view="queue">
+        <div class="mb-7"><div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Batch workflow</div><h1 class="text-3xl font-semibold tracking-[-.04em] text-white">Idea queue</h1><p class="mt-2 text-sm text-slate-400">Prepare multiple ideas and let the local scheduler process them one at a time.</p></div>
+        <div class="panel mb-5 p-4 sm:p-5">
+          <div class="mb-4"><h2 class="text-sm font-semibold text-slate-100">Add ideas</h2><p class="mt-1 text-xs text-slate-500">One idea per line. Shared settings apply to the batch.</p></div>
+          <textarea id="ideasBulk" class="input-control" placeholder="How the Silk Road reshaped trade&#10;The hidden engineering behind ancient aqueducts&#10;Why the first computer bug mattered"></textarea>
+          <div class="mt-4 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            <div><label for="iMode" class="mb-1.5 block text-[11px] font-semibold text-slate-400">Visual mode</label><select id="iMode" class="input-control !py-2.5"><option value="image">AI stills</option><option value="video">AI video</option></select></div>
+            <div><label for="iFmt" class="mb-1.5 block text-[11px] font-semibold text-slate-400">Format</label><select id="iFmt" class="input-control !py-2.5"><option value="shorts">Vertical · Shorts</option><option value="video">Landscape</option></select></div>
+            <div><label for="iSec" class="mb-1.5 block text-[11px] font-semibold text-slate-400">Runtime (seconds)</label><input id="iSec" class="input-control !py-2.5" type="number" min="10" max="900" value="45"></div>
+            <div><label for="iLanguage" class="mb-1.5 block text-[11px] font-semibold text-slate-400">Language</label><input id="iLanguage" class="input-control !py-2.5" value="English"></div>
+            <div><label for="iSched" class="mb-1.5 block text-[11px] font-semibold text-slate-400">Schedule (optional)</label><input id="iSched" class="input-control !py-2.5" type="datetime-local"></div>
+          </div>
+          <div class="mt-4 flex justify-end"><button id="addIdeasBtn" class="btn-primary" type="button">Add to queue <span>→</span></button></div>
+        </div>
+        <div class="panel overflow-hidden">
+          <div class="flex flex-wrap items-center justify-between gap-3 border-b border-white/[.06] px-4 py-4 sm:px-5"><div><h2 class="text-sm font-semibold text-slate-100">Queued ideas</h2><p class="mt-1 text-xs text-slate-500">Run, monitor, or remove a queued idea</p></div><button id="refreshIdeas" class="btn-secondary text-xs" type="button">↻ Refresh</button></div>
+          <table class="idea-table w-full border-collapse"><thead><tr><th>Idea</th><th>Status</th><th>Target</th><th>Scheduled</th><th>Result</th><th></th></tr></thead><tbody id="ideaRows"><tr><td colspan="6" class="py-8 text-center text-sm text-slate-500">Loading…</td></tr></tbody></table>
+        </div>
+      </section>
+
+      <!-- Scheduler -->
+      <section class="page-view hidden" data-page-view="scheduler">
+        <div class="mb-7"><div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Automation</div><h1 class="text-3xl font-semibold tracking-[-.04em] text-white">Scheduler</h1><p class="mt-2 text-sm text-slate-400">Run queued ideas sequentially to keep local generation resources safe.</p></div>
+        <div class="grid gap-5 xl:grid-cols-[minmax(0,1fr)_360px]">
+          <div class="panel p-4 sm:p-6">
+            <div class="mb-5"><h2 class="text-sm font-semibold text-slate-100">Daily schedule</h2><p class="mt-1 text-xs text-slate-500">Enable a daily trigger for ideas without a specific schedule.</p></div>
+            <div class="grid gap-4 sm:grid-cols-2">
+              <div><label for="sEnabled" class="mb-2 block text-xs font-semibold text-slate-300">Daily scheduling</label><select id="sEnabled" class="input-control"><option value="false">Off</option><option value="true">On — run daily</option></select></div>
+              <div><label for="sTime" class="mb-2 block text-xs font-semibold text-slate-300">Daily run time</label><input id="sTime" class="input-control" type="time" value="09:00"></div>
+            </div>
+            <div class="mt-4 rounded-xl border border-white/[.06] bg-white/[.02] p-3.5 text-xs leading-5 text-slate-400">Specific-time ideas run at their scheduled time. Otherwise, ideas run when the scheduler is active. Jobs are processed one at a time.</div>
+            <div class="mt-5 flex flex-wrap gap-2"><button id="saveSched" class="btn-primary" type="button">Save schedule</button><button id="toggleSched" class="btn-secondary" type="button">Start scheduler</button></div>
+          </div>
+          <div class="panel p-4 sm:p-5"><div class="mb-4 flex items-center justify-between"><div><h2 class="text-sm font-semibold text-slate-100">Live activity</h2><p class="mt-1 text-xs text-slate-500">Current scheduler state</p></div><span id="schedDotLarge" class="h-2.5 w-2.5 rounded-full bg-slate-600"></span></div><div id="schedLive" class="rounded-xl border border-white/[.06] bg-black/10 px-3.5 py-3 text-sm text-slate-300">Checking status…</div><div id="schedProgressWrap" class="mt-4 hidden"><div class="mb-2 flex justify-between text-[11px] text-slate-500"><span id="schedStage">Waiting</span><span id="schedProgressLabel">0%</span></div><div class="progress-track"><div id="schedProgressBar" class="progress-fill w-0"></div></div></div></div>
+        </div>
+      </section>
+
+      <!-- Library -->
+      <section class="page-view hidden" data-page-view="library">
+        <div class="mb-7 flex flex-col justify-between gap-4 sm:flex-row sm:items-end"><div><div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Exports and scripts</div><h1 class="text-3xl font-semibold tracking-[-.04em] text-white">Video library</h1><p class="mt-2 text-sm text-slate-400">Watch finished exports and review the generated storyboards.</p></div><button class="btn-secondary" type="button" data-nav="create">＋ Create video</button></div>
+        <div class="grid items-start gap-5 xl:grid-cols-[340px_minmax(0,1fr)]">
+          <div class="panel p-4"><div class="mb-3 flex items-center justify-between"><h2 class="text-sm font-semibold text-slate-100">Projects</h2><button id="refreshJobs" class="btn-quiet text-xs" type="button">↻</button></div><div id="jobList" class="max-h-[72vh] overflow-y-auto">Loading projects…</div></div>
+          <div id="jobEditor" class="panel min-w-0 p-4 sm:p-5"><div class="grid min-h-52 place-items-center text-center"><div><div class="mx-auto mb-3 grid h-12 w-12 place-items-center rounded-2xl bg-violet/10 text-xl text-violet">▶</div><div class="text-sm font-semibold text-slate-300">Choose a project</div><p class="mt-1 text-xs text-slate-500">Select a video on the left to view its export and script.</p></div></div></div>
+        </div>
+      </section>
+
+      <!-- Music -->
+      <section class="page-view hidden" data-page-view="music">
+        <div class="mb-7"><div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Sound library</div><h1 class="text-3xl font-semibold tracking-[-.04em] text-white">Music library</h1><p class="mt-2 text-sm text-slate-400">Manage the local background tracks mixed under narration.</p></div>
+        <div class="panel max-w-4xl p-4 sm:p-6">
+          <div class="mb-5 flex items-start gap-3"><div class="grid h-10 w-10 shrink-0 place-items-center rounded-xl bg-cyan/10 text-lg text-cyan">♫</div><div><h2 class="text-sm font-semibold text-slate-100">Background music</h2><p class="mt-1 text-xs leading-5 text-slate-500">A track is selected from this folder for each new export. Upload audio you have permission to use.</p></div></div>
+          <div class="flex flex-col gap-3 rounded-2xl border border-dashed border-slate-700/80 bg-black/10 p-4 sm:flex-row sm:items-center sm:justify-between"><div><div class="text-xs font-semibold text-slate-200">Add an audio track</div><div class="mt-1 text-[11px] text-slate-500">MP3, WAV, OGG, M4A or FLAC</div></div><div class="flex flex-wrap gap-2"><input id="musicFile" class="input-control max-w-xs !py-2 text-xs" type="file" accept=".mp3,.wav,.ogg,.m4a,.flac"><button id="uploadMusic" class="btn-secondary text-xs" type="button">Upload track</button></div></div>
+          <div class="mt-6 flex items-center justify-between gap-3"><h3 class="text-xs font-semibold text-slate-300">Available tracks</h3><span id="musicCount" class="text-[10px] text-slate-500">0 tracks</span></div><div id="musicList" class="mt-2 divide-y divide-white/[.05]"><div class="py-6 text-sm text-slate-500">Loading tracks…</div></div>
+        </div>
+      </section>
+
+      <!-- Settings -->
+      <section class="page-view hidden" data-page-view="settings">
+        <div class="mb-7"><div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Preferences</div><h1 class="text-3xl font-semibold tracking-[-.04em] text-white">Studio settings</h1><p class="mt-2 text-sm text-slate-400">Tune narration, pacing, visual style, music, and the end card.</p></div>
+        <form id="settingsForm" class="panel max-w-5xl p-4 sm:p-6">
+          <div class="grid gap-5 lg:grid-cols-2">
+            <div class="space-y-4">
+              <div class="border-b border-white/[.06] pb-3"><h2 class="text-sm font-semibold text-slate-100">Narration and pacing</h2><p class="mt-1 text-xs text-slate-500">Duration is verified from the actual generated voiceover.</p></div>
+              <div><label for="sVoice" class="mb-2 block text-xs font-semibold text-slate-300">Text-to-speech voice</label><input id="sVoice" class="input-control" placeholder="en-US-AndrewMultilingualNeural"></div>
+              <div class="grid gap-3 sm:grid-cols-2"><div><label for="sRate" class="mb-2 block text-xs font-semibold text-slate-300">Voice rate adjustment</label><input id="sRate" class="input-control" placeholder="+0%"></div><div><label for="sWpm" class="mb-2 block text-xs font-semibold text-slate-300">Draft pace estimate (WPM)</label><input id="sWpm" class="input-control" type="number" min="100" max="260" step="5"></div></div>
+              <div><label for="sMusic" class="mb-2 block text-xs font-semibold text-slate-300">Background music</label><select id="sMusic" class="input-control"><option value="true">Enabled</option><option value="false">Disabled</option></select></div>
+              <div><label for="sVol" class="mb-2 block text-xs font-semibold text-slate-300">Music volume · <span id="sVolLabel">50%</span></label><input id="sVol" class="w-full accent-violet" type="range" min="0" max="100" step="1" aria-label="Background music volume percentage"><p class="mt-1 text-[10px] text-slate-500">Custom mix level: 0% muted · 50% balanced · 100% loudest.</p></div>
+            </div>
+            <div class="space-y-4">
+              <div class="border-b border-white/[.06] pb-3"><h2 class="text-sm font-semibold text-slate-100">Visual direction</h2><p class="mt-1 text-xs text-slate-500">Applied consistently across the scenes in a video.</p></div>
+              <div><label for="sStyle" class="mb-2 block text-xs font-semibold text-slate-300">Image style</label><textarea id="sStyle" class="input-control !min-h-[82px]"></textarea></div>
+              <div><label for="sStyleV" class="mb-2 block text-xs font-semibold text-slate-300">Video style</label><textarea id="sStyleV" class="input-control !min-h-[82px]"></textarea></div>
+            </div>
+          </div>
+          <div class="mt-6 border-t border-white/[.06] pt-5">
+            <div class="mb-4"><h2 class="text-sm font-semibold text-slate-100">Outro card</h2><p class="mt-1 text-xs text-slate-500">When enabled, its runtime is included in the requested total video duration.</p></div>
+            <div class="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"><div><label for="sEnd" class="mb-2 block text-xs font-semibold text-slate-300">End card</label><select id="sEnd" class="input-control"><option value="true">Enabled</option><option value="false">Disabled</option></select></div><div><label for="sChannel" class="mb-2 block text-xs font-semibold text-slate-300">Channel name</label><input id="sChannel" class="input-control" placeholder="Your channel"></div><div><label for="sTagline" class="mb-2 block text-xs font-semibold text-slate-300">Tagline</label><input id="sTagline" class="input-control" placeholder="More stories, every week"></div><div><label for="sEndSec" class="mb-2 block text-xs font-semibold text-slate-300">Outro length · seconds</label><input id="sEndSec" class="input-control" type="number" min="1" max="15"></div></div>
+          </div>
+          <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/[.06] pt-5"><button class="btn-primary" type="submit">Save settings</button><span id="setMsg" class="text-xs text-mint" role="status"></span></div>
+        </form>
+      </section>
+
+      <!-- Admin / AI services -->
+      <section class="page-view hidden" data-page-view="admin">
+        <div class="mb-7"><div class="mb-2 flex items-center gap-2 text-[10px] font-bold uppercase tracking-[.18em] text-violet"><span class="h-px w-6 bg-violet"></span> Administration</div><h1 class="text-3xl font-semibold tracking-[-.04em] text-white">AI services</h1><p class="mt-2 max-w-2xl text-sm leading-6 text-slate-400">Set the Ollama script API and model, plus the ComfyUI visual-generation server. These settings are saved to the local project configuration.</p></div>
+        <form id="adminForm" class="panel max-w-5xl p-4 sm:p-6">
+          <div class="grid gap-7 lg:grid-cols-2">
+            <div class="space-y-4">
+              <div class="border-b border-white/[.06] pb-3"><h2 class="text-sm font-semibold text-slate-100">Script generation · Ollama</h2><p class="mt-1 text-xs leading-5 text-slate-500">Use a local or reachable Ollama server. The selected model must be installed there.</p></div>
+              <div><label for="adminOllamaHost" class="mb-2 block text-xs font-semibold text-slate-300">Ollama API base URL</label><input id="adminOllamaHost" class="input-control" placeholder="http://localhost:11434" autocomplete="url"></div>
+              <div><label for="adminOllamaModel" class="mb-2 block text-xs font-semibold text-slate-300">Model tag</label><input id="adminOllamaModel" class="input-control" placeholder="qwen3.5:latest"></div>
+              <div><label for="adminNumPredict" class="mb-2 block text-xs font-semibold text-slate-300">Maximum output tokens</label><input id="adminNumPredict" class="input-control" type="number" min="512" max="16384" step="512"><p class="mt-2 text-[11px] leading-5 text-slate-500">Higher limits help long, many-scene scripts avoid truncated JSON. The generator retries once with a larger limit if Ollama stops at its token cap.</p></div>
+              <div><label for="adminOllamaThink" class="mb-2 block text-xs font-semibold text-slate-300">Thinking mode for structured script output</label><select id="adminOllamaThink" class="input-control"><option value="false">Off (recommended)</option><option value="true">On</option></select><p class="mt-2 text-[11px] leading-5 text-slate-500">If the model returns empty or invalid JSON, the generator already retries once with thinking enabled.</p></div>
+            </div>
+            <div class="space-y-4">
+              <div class="border-b border-white/[.06] pb-3"><h2 class="text-sm font-semibold text-slate-100">Visual generation · ComfyUI</h2><p class="mt-1 text-xs leading-5 text-slate-500">Higher megapixels can improve detail but use more GPU memory; generation automatically falls back to a lower resolution on memory errors.</p></div>
+              <div><label for="adminComfyHost" class="mb-2 block text-xs font-semibold text-slate-300">ComfyUI API base URL</label><input id="adminComfyHost" class="input-control" placeholder="http://localhost:8188" autocomplete="url"></div>
+              <div><label for="adminComfyTimeout" class="mb-2 block text-xs font-semibold text-slate-300">Request timeout · seconds</label><input id="adminComfyTimeout" class="input-control" type="number" min="60" max="7200" step="30"></div>
+              <div class="grid gap-3 sm:grid-cols-2"><div><label for="adminImageMp" class="mb-2 block text-xs font-semibold text-slate-300">Still-image generation · MP</label><input id="adminImageMp" class="input-control" type="number" min="1" max="4" step="0.5"></div><div><label for="adminVideoMp" class="mb-2 block text-xs font-semibold text-slate-300">Video generation · MP</label><input id="adminVideoMp" class="input-control" type="number" min="1" max="4" step="0.5"></div></div>
+            </div>
+          </div>
+          <div class="mt-6 rounded-xl border border-cyan/15 bg-cyan/[.04] p-3 text-[11px] leading-5 text-slate-400">This build uses Ollama and ComfyUI. It does not store third-party API keys or configure OpenAI-compatible providers; the endpoint fields above point to the services this project already supports.</div>
+          <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/[.06] pt-5"><button class="btn-primary" type="submit">Save AI settings</button><button id="testAiBtn" class="btn-secondary" type="button">Test connections</button><span id="adminMsg" class="text-xs text-mint" role="status" aria-live="polite"></span></div>
+          <div id="adminTestResults" class="mt-4 hidden rounded-xl border border-white/[.06] bg-black/15 p-4 text-xs leading-6" aria-live="polite"></div>
+        </form>
+      </section>
+    </main>
   </div>
 
-  <div class="card" id="liveCard" style="display:none">
-    <h2><span class="ic">&#9889;</span>Live generation</h2>
-    <div id="liveTitle" style="font-weight:600;margin-bottom:6px"></div>
-    <div style="background:var(--p2);border-radius:20px;height:10px;overflow:hidden;margin:8px 0">
-      <div id="liveBar" style="height:100%;width:0;background:linear-gradient(90deg,var(--acc),var(--acc2));transition:width 1s"></div>
-    </div>
-    <div class="meta" id="liveStage" style="color:var(--dim);font-size:12px;margin-bottom:6px"></div>
-    <div id="liveLog"></div>
-  </div>
-
-  </main>
-</div>
-<div class="toast" id="toast"></div>
+  <div id="toast" class="fixed bottom-4 right-4 z-[70] hidden max-w-[calc(100vw-2rem)] rounded-xl border border-stroke bg-panel-raised px-4 py-3 text-sm text-slate-100 shadow-2xl sm:bottom-6 sm:right-6" role="status" aria-live="polite"></div>
 
 <script>
-const $ = id => document.getElementById(id);
-let curJob=null, poller=null, curScript=null, curScriptJob=null;
-function tab(t){
-  for (const x of ['dash','ideas','sched','jobs','music','set']) $('p-'+x).style.display = x===t?'':'none';
-  document.querySelectorAll('.nav a').forEach(a=>a.classList.toggle('on',a.dataset.t===t));
-  if (t==='dash') loadDash(); if (t==='ideas') loadIdeas(); if (t==='sched') loadSched();
-  if (t==='jobs') loadJobs(); if (t==='music') loadMusic(); if (t==='set') loadSettings();
-}
-function toast(m){ $('toast').textContent=m; $('toast').style.display='block'; setTimeout(()=>$('toast').style.display='none',2500); }
-const STATUS_COLORS={pending:'b-pending',processing:'b-processing',completed:'b-completed',error:'b-error'};
+const $ = (id) => document.getElementById(id);
+const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
+const STATUS_CLASS = {pending:'badge-pending', processing:'badge-processing', completed:'badge-completed', error:'badge-error'};
+const PAGE_NAMES = {overview:['Workspace','Overview'],create:['Studio','Create video'],queue:['Workspace','Idea queue'],scheduler:['Automation','Scheduler'],library:['Exports','Video library'],music:['Studio tools','Music library'],settings:['Preferences','Studio settings'],admin:['Administration','AI services']};
+let currentView = 'overview';
+let currentScript = null;
+let currentScriptJob = null;
+let poller = null;
+let toastTimer = null;
 
-async function loadDash(){
-  const ideas = await (await fetch('/api/ideas')).json();
-  const jobs = await (await fetch('/api/jobs')).json();
-  const n = s => ideas.filter(i=>i.status===s).length;
-  $('stats').innerHTML = `
-    <div class="stat"><div class="n">${n('pending')}</div><div class="l">pending ideas</div></div>
-    <div class="stat"><div class="n">${n('processing')}</div><div class="l">in process</div></div>
-    <div class="stat"><div class="n">${n('completed')}</div><div class="l">completed</div></div>`;
-  $('dashIdeas').innerHTML = ideas.slice(-8).reverse().map(i=>ideaRow(i)).join('')||'<div class="empty">none</div>';
-  $('dashJobs').innerHTML = jobs.filter(j=>j.videos.length).slice(0,5).map(j=>
-    `<div class="idea-item"><span class="t">${j.title||j.job}</span>
-     <video controls src="/api/video/${encodeURIComponent(j.job)}/${encodeURIComponent(j.videos[0])}"></video></div>`).join('')
-    || '<div class="empty">no videos yet</div>';
-  refreshSchedState();
+async function api(url, options = {}) {
+  const response = await fetch(url, options);
+  let data = {};
+  try { data = await response.json(); } catch (_) {}
+  if (!response.ok) throw new Error(data.error || `Request failed (${response.status})`);
+  return data;
 }
-function ideaRow(i){
-  const v = i.video ? `<a href="#" onclick="return false"><span class="badge b-completed">video ready</span></a>` : '';
-  return `<div class="idea-item"><span class="t">${i.text}<div class="meta">${i.created||''}${i.error?' &middot; '+i.error:''}</div></span>
-    <span class="badge ${STATUS_COLORS[i.status]||''}">${i.status}</span>${v}
-    <span class="meta">${i.scheduled_at||''}</span>
-    <span>
-      <button class="btn sec sm" onclick="runIdea(${i.id})">run</button>
-      <button class="btn danger sm" onclick="delIdea(${i.id})">x</button></span></div>`;
+function jsonOptions(body) { return {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(body)}; }
+function toast(message, isError = false) {
+  const node = $('toast');
+  node.textContent = message;
+  node.className = `fixed bottom-4 right-4 z-[70] max-w-[calc(100vw-2rem)] rounded-xl border px-4 py-3 text-sm shadow-2xl sm:bottom-6 sm:right-6 ${isError ? 'border-rose/25 bg-[#25121a] text-rose' : 'border-stroke bg-panel-raised text-slate-100'} toast-enter`;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { node.classList.add('hidden'); }, 2800);
 }
-async function loadIdeas(){ const ideas = await (await fetch('/api/ideas')).json();
-  $('ideaRows').innerHTML = ideas.map(i=>`<tr><td>${i.text}<div class="meta">${i.mode}/${i.format}/${i.seconds}s</div></td>
-    <td><span class="badge ${STATUS_COLORS[i.status]||''}">${i.status}</span></td>
-    <td class="meta">${i.scheduled_at||'&mdash;'}</td>
-    <td>${i.video?'<span class="badge b-completed">ready</span>':(i.error?'<span class="meta">'+i.error.slice(0,80)+'</span>':'&mdash;')}</td>
-    <td><button class="btn sec sm" onclick="runIdea(${i.id})">run</button> <button class="btn danger sm" onclick="delIdea(${i.id})">x</button></td></tr>`).join('')
-    || '<tr><td colspan="5" class="empty">no ideas yet</td></tr>'; }
-async function addIdeas(){
-  const texts = $('ideasBulk').value.split('\n').map(s=>s.trim()).filter(Boolean);
-  if (!texts.length) return toast('add at least one idea');
-  await fetch('/api/ideas',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    ideas:texts, mode:$('iMode').value, format:$('iFmt').value, seconds:+$('iSec').value,
-    scheduled_at:$('iSched').value? new Date($('iSched').value).toISOString().slice(0,19) : null})});
-  $('ideasBulk').value=''; $('iSched').value=''; toast('added'); loadIdeas();
+function showMobileMenu(show) {
+  $('sidebar').classList.toggle('-translate-x-full', !show);
+  $('mobileBackdrop').classList.toggle('hidden', !show);
 }
-async function runIdea(id){ await fetch(`/api/ideas/${id}/run`,{method:'POST'}); toast('queued for generation'); loadIdeas(); }
-async function delIdea(id){ await fetch(`/api/ideas/${id}`,{method:'DELETE'}); loadIdeas(); }
-
-async function loadSched(){
-  const c = await (await fetch('/api/scheduler')).json();
-  $('sEnabled').value=String(!!c.enabled); $('sTime').value=c.daily_time;
-  refreshSchedState(c);
+function navigate(view) {
+  if (!PAGE_NAMES[view]) return;
+  currentView = view;
+  document.querySelectorAll('[data-page-view]').forEach(section => section.classList.toggle('hidden', section.dataset.pageView !== view));
+  document.querySelectorAll('[data-nav]').forEach(button => button.classList.toggle('active', button.dataset.nav === view));
+  $('pageKicker').textContent = PAGE_NAMES[view][0];
+  $('pageTitle').textContent = PAGE_NAMES[view][1];
+  showMobileMenu(false);
+  if (view === 'overview') loadDashboard();
+  if (view === 'queue') loadIdeas();
+  if (view === 'scheduler') loadScheduler();
+  if (view === 'library') loadJobs();
+  if (view === 'music') loadMusic();
+  if (view === 'settings') loadSettings();
+  if (view === 'admin') loadAdmin();
 }
-function refreshSchedState(c){
-  fetch('/api/scheduler').then(r=>r.json()).then(c=>{
-    $('schedState').textContent = c.running ? (c.enabled?'on (daily '+c.daily_time+')':'on (queue only)') : 'off';
-    $('schedState').style.color = c.running?'var(--ok)':'var(--dim)';
-    $('schedBtn').textContent = c.running?'Stop':'Start now';
-    $('schedLive').textContent = c.running ? 'running &mdash; picks next pending idea automatically' : 'stopped';
-  });
+function statusBadge(status) {
+  const cls = STATUS_CLASS[status] || 'badge-processing';
+  return `<span class="badge ${cls}">${escapeHtml(status || 'unknown')}</span>`;
 }
-async function saveSched(){
-  await fetch('/api/scheduler',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    enabled:$('sEnabled').value==='true', daily_time:$('sTime').value||'09:00'})});
-  toast('saved'); refreshSchedState();
+function statCard(label, value, tint, foot) {
+  return `<div class="panel p-4 sm:p-5"><div class="flex items-start justify-between gap-3"><div><div class="text-[10px] font-bold uppercase tracking-[.15em] text-slate-500">${label}</div><div class="mt-3 text-3xl font-semibold tracking-tight text-white">${value}</div><div class="mt-1 text-[11px] text-slate-500">${foot}</div></div><div class="grid h-9 w-9 place-items-center rounded-xl ${tint}"><span class="h-2 w-2 rounded-full bg-current"></span></div></div></div>`;
 }
-async function toggleSched(){
-  const c = await (await fetch('/api/scheduler')).json();
-  await fetch('/api/scheduler',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({action:c.running?'stop':'start'})});
-  refreshSchedState();
+function renderDashIdea(item) {
+  return `<div class="flex items-center gap-3 py-3"><div class="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-violet/10 text-xs text-violet">✦</div><div class="min-w-0 flex-1"><div class="truncate text-xs font-medium text-slate-200">${escapeHtml(item.text)}</div><div class="mt-1 text-[10px] text-slate-500">${escapeHtml(item.mode || 'image')} · ${Number(item.seconds || 0)}s · ${escapeHtml(item.created || '')}</div></div>${statusBadge(item.status)}</div>`;
 }
-
-async function loadJobs(){
-  const jobs = await (await fetch('/api/jobs')).json();
-  $('jobList').innerHTML = jobs.map(j=>`<div class="idea-item" style="cursor:pointer" onclick="openJob('${j.job}')">
-    <span class="t">${j.title||j.job}</span><span class="meta">${j.videos.length?'<span class="badge b-completed">'+j.videos.length+'</span>':''}</span></div>`).join('')||'<div class="empty">none</div>';
-}
-async function openJob(name){
-  const j = await (await fetch('/api/job/'+name)).json();
-  curScript=j.script; curScriptJob=name;
-  let h=`<h2>${name}</h2>`;
-  for (const v of j.videos) h+=`<video controls src="/api/video/${encodeURIComponent(name)}/${encodeURIComponent(v)}"></video><div class="meta">${v}</div>`;
-  if (j.script){
-    h+=`<div class="row" style="margin-top:10px"><input id="editTitle" value="${(j.script.title||'').replace(/"/g,'&quot;')}">
-        <button class="btn sec sm" style="margin:0" onclick="saveScript()">save script</button>
-        <button class="btn sm" style="margin:0" onclick="rerender()">re-render</button></div>`;
-    h+=j.script.scenes.map((s,i)=>`<div class="scene"><span class="badge b-processing">scene ${i+1}</span>
-      <button class="btn sec sm" style="margin:0;float:right" onclick="regenScene(${i})">regen visual</button>
-      <label>Narration</label><textarea id="narr${i}">${s.narration}</textarea>
-      <label>Visual prompt</label><textarea id="vis${i}">${s.visual_prompt}</textarea></div>`).join('');
+async function loadDashboard() {
+  try {
+    const [ideas, jobs] = await Promise.all([api('/api/ideas'), api('/api/jobs')]);
+    const counts = status => ideas.filter(item => item.status === status).length;
+    const videoCount = jobs.reduce((sum, job) => sum + (job.videos || []).length, 0);
+    $('stats').innerHTML = [
+      statCard('Pending ideas', counts('pending'), 'bg-amber/10 text-amber', 'waiting in your queue'),
+      statCard('In progress', counts('processing'), 'bg-violet/10 text-violet', 'being generated now'),
+      statCard('Completed ideas', counts('completed'), 'bg-mint/10 text-mint', 'ready for review'),
+      statCard('Finished exports', videoCount, 'bg-cyan/10 text-cyan', 'saved in your library')
+    ].join('');
+    $('queueCount').textContent = String(counts('pending'));
+    $('dashIdeas').innerHTML = ideas.slice(-7).reverse().map(renderDashIdea).join('') || '<div class="py-8 text-center text-sm text-slate-500">No ideas yet. Start with one story.</div>';
+    const latest = jobs.filter(job => job.videos && job.videos.length).slice(0, 4);
+    $('dashJobs').innerHTML = latest.map(job => {
+      const file = job.videos[0];
+      const src = `/api/video/${encodeURIComponent(job.job)}/${encodeURIComponent(file)}`;
+      return `<article class="group overflow-hidden rounded-xl border border-white/[.06] bg-black/15"><video class="aspect-video w-full bg-black object-cover" src="${src}" controls preload="metadata"></video><button class="flex w-full items-center justify-between gap-2 px-3 py-2.5 text-left text-xs font-medium text-slate-300 hover:text-white" type="button" data-open-job="${escapeHtml(job.job)}"><span class="truncate">${escapeHtml(job.title || job.job)}</span><span aria-hidden="true">↗</span></button></article>`;
+    }).join('') || '<div class="col-span-full py-8 text-center text-sm text-slate-500">No exports yet. Your finished videos will appear here.</div>';
+    await refreshSchedulerState();
+  } catch (error) {
+    toast(error.message, true);
   }
-  $('jobEditor').innerHTML=h;
 }
-async function saveScript(){
-  curScript.title=$('editTitle').value;
-  curScript.scenes.forEach((s,i)=>{s.narration=$('narr'+i).value;s.visual_prompt=$('vis'+i).value;});
-  await fetch('/api/job/'+curScriptJob+'/save_script',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(curScript)});
-  toast('script saved');
+function renderIdeaRow(item) {
+  const result = item.video ? `<span class="badge badge-completed">Ready</span>` : item.error ? `<span class="max-w-48 truncate text-[11px] text-rose" title="${escapeHtml(item.error)}">${escapeHtml(item.error)}</span>` : '<span class="text-xs text-slate-600">—</span>';
+  const scheduled = item.scheduled_at ? escapeHtml(item.scheduled_at.replace('T',' ')) : '<span class="text-slate-600">—</span>';
+  return `<tr><td><div class="max-w-[430px] whitespace-normal text-xs font-medium leading-5 text-slate-200">${escapeHtml(item.text)}</div><div class="mt-1 text-[10px] text-slate-500">${escapeHtml(item.created || '')}</div></td><td>${statusBadge(item.status)}</td><td><span class="text-xs text-slate-300">${escapeHtml(item.mode || 'image')}</span><span class="mx-1 text-slate-600">·</span><span class="text-xs text-slate-400">${escapeHtml(item.format || 'shorts')}</span><div class="mt-1 text-[10px] text-slate-500">${Number(item.seconds || 0)} seconds</div></td><td class="text-xs text-slate-400">${scheduled}</td><td>${result}</td><td><div class="flex items-center justify-end gap-1"><button class="btn-quiet !px-2 !py-1.5 text-[11px]" type="button" data-action="run-idea" data-id="${Number(item.id)}" title="Run this idea">Run</button><button class="btn-danger !px-2 !py-1.5 text-[11px]" type="button" data-action="delete-idea" data-id="${Number(item.id)}" title="Remove idea">×</button></div></td></tr>`;
 }
-async function rerender(){
-  $('runCard').style.display='block'; $('log').style.display='block'; $('log').textContent='';
-  $('genStatus').textContent='re-rendering...'; $('genStatus').className='status st-run';
-  await fetch('/api/job/'+curScriptJob+'/rerender',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({})});
-  pollStatus(curScriptJob);
+async function loadIdeas() {
+  try {
+    const ideas = await api('/api/ideas');
+    $('queueCount').textContent = String(ideas.filter(item => item.status === 'pending').length);
+    $('ideaRows').innerHTML = ideas.map(renderIdeaRow).join('') || '<tr><td colspan="6" class="py-10 text-center text-sm text-slate-500">The queue is empty. Add your first idea above.</td></tr>';
+  } catch (error) { toast(error.message, true); }
 }
-async function regenScene(i){
-  await fetch('/api/job/'+curScriptJob+'/regen_scene',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({scene:i})});
-  toast('visual deleted — rerun the idea to regenerate');
+async function addIdeas() {
+  const texts = $('ideasBulk').value.split('\n').map(value => value.trim()).filter(Boolean);
+  if (!texts.length) return toast('Add at least one idea.', true);
+  try {
+    await api('/api/ideas', jsonOptions({ideas:texts, mode:$('iMode').value, format:$('iFmt').value, seconds:Number($('iSec').value), language:$('iLanguage').value.trim() || 'English', scheduled_at:$('iSched').value || null}));
+    $('ideasBulk').value = '';
+    $('iSched').value = '';
+    toast(`${texts.length} idea${texts.length === 1 ? '' : 's'} added to the queue.`);
+    loadIdeas();
+    loadDashboard();
+  } catch (error) { toast(error.message, true); }
 }
-function pollStatus(job){
+async function runIdea(id) {
+  try {
+    await api(`/api/ideas/${id}/run`, {method:'POST'});
+    toast('Idea queued for generation.');
+    loadIdeas();
+  } catch (error) { toast(error.message, true); }
+}
+async function deleteIdea(id) {
+  if (!confirm('Remove this idea from the queue?')) return;
+  try { await api(`/api/ideas/${id}`, {method:'DELETE'}); loadIdeas(); loadDashboard(); }
+  catch (error) { toast(error.message, true); }
+}
+async function createVideo(event) {
+  event.preventDefault();
+  const idea = $('ideaInput').value.trim();
+  if (!idea) return toast('Write an idea before generating.', true);
+  const seconds = Number($('createSeconds').value);
+  if (!Number.isInteger(seconds) || seconds < 10 || seconds > 900) return toast('Choose a duration between 10 and 900 seconds.', true);
+  const button = $('generateBtn');
+  button.disabled = true;
+  button.innerHTML = '<span class="animate-spin">◌</span> Starting…';
+  try {
+    const result = await api('/api/generate', jsonOptions({idea, mode:$('createMode').value, format:$('createFormat').value, seconds, language:$('createLanguage').value.trim() || 'English'}));
+    $('runCard').classList.remove('hidden');
+    $('genTitle').textContent = idea;
+    $('genStatus').className = 'badge badge-processing';
+    $('genStatus').textContent = 'queued';
+    $('log').classList.remove('hidden');
+    $('log').textContent = 'Starting local generation…';
+    $('finalResult').classList.add('hidden');
+    pollStatus(result.job);
+    toast('Generation started.');
+  } catch (error) { toast(error.message, true); }
+  finally { button.disabled = false; button.innerHTML = '<span>✦</span> Generate video'; }
+}
+function badgeForStatus(status) {
+  const node = $('genStatus');
+  const cls = STATUS_CLASS[status] || 'badge-processing';
+  node.className = `badge ${cls}`;
+  node.textContent = status || 'running';
+}
+async function pollStatus(job) {
   clearInterval(poller);
-  poller=setInterval(async()=>{
-    const j=await (await fetch('/api/status/'+job)).json();
-    $('log').textContent=j.log.join('\n'); $('log').scrollTop=1e9;
-    $('genStatus').textContent=j.status; $('genStatus').className='status '+(j.status==='done'?'st-done':j.status==='error'?'st-err':'st-run');
-    if (j.status==='done'||j.status==='error'){clearInterval(poller); loadJobs();}
-  },1500);
+  const tick = async () => {
+    try {
+      const status = await api(`/api/status/${encodeURIComponent(job)}`);
+      $('log').textContent = (status.log || []).join('\n') || 'Preparing…';
+      $('log').scrollTop = $('log').scrollHeight;
+      badgeForStatus(status.status);
+      if (status.status === 'done') {
+        $('finalResult').classList.remove('hidden');
+        $('finalResult').innerHTML = `Video ready: <a class="font-semibold underline decoration-mint/40 underline-offset-4" target="_blank" rel="noopener" href="/api/video/${encodeURIComponent(job)}/${encodeURIComponent(status.final)}">${escapeHtml(status.final || 'Open export')}</a>`;
+        clearInterval(poller); loadJobs(); loadDashboard();
+      } else if (status.status === 'error') {
+        $('finalResult').classList.remove('hidden');
+        $('finalResult').className = 'mt-4 rounded-xl border border-rose/15 bg-rose/[.05] p-3 text-sm text-rose';
+        $('finalResult').textContent = status.error || 'Generation failed. Check the run log.';
+        clearInterval(poller);
+      }
+    } catch (error) {
+      if (!String(error.message).includes('unknown job')) toast(error.message, true);
+    }
+  };
+  await tick();
+  poller = setInterval(tick, 1500);
+}
+async function refreshSchedulerState() {
+  try {
+    const status = await api('/api/scheduler');
+    const active = Boolean(status.running);
+    $('schedState').textContent = active ? (status.enabled ? `Daily · ${status.daily_time}` : 'Queue active') : 'Stopped';
+    $('schedState').className = `mt-1 text-[11px] ${active ? 'text-mint' : 'text-slate-500'}`;
+    $('schedDot').className = `h-2 w-2 rounded-full ${active ? 'bg-mint shadow-[0_0_10px_#71e2bd]' : 'bg-slate-600'}`;
+    $('schedDotLarge').className = `h-2.5 w-2.5 rounded-full ${active ? 'bg-mint shadow-[0_0_12px_#71e2bd]' : 'bg-slate-600'}`;
+    $('toggleSched').textContent = active ? 'Stop scheduler' : 'Start scheduler';
+    $('schedLive').textContent = active ? (status.enabled ? `Scheduler active · daily at ${status.daily_time}` : 'Scheduler active · queue-only mode') : 'Scheduler stopped. Queued ideas will wait until it is started.';
+  } catch (_) {}
+}
+async function loadScheduler() {
+  try {
+    const config = await api('/api/scheduler');
+    $('sEnabled').value = String(Boolean(config.enabled));
+    $('sTime').value = config.daily_time || '09:00';
+    await refreshSchedulerState();
+    await updateSchedulerLive();
+  } catch (error) { toast(error.message, true); }
+}
+async function saveScheduler() {
+  try {
+    await api('/api/scheduler', jsonOptions({enabled:$('sEnabled').value === 'true', daily_time:$('sTime').value || '09:00'}));
+    toast('Schedule settings saved.');
+    refreshSchedulerState();
+  } catch (error) { toast(error.message, true); }
+}
+async function toggleScheduler() {
+  try {
+    const status = await api('/api/scheduler');
+    await api('/api/scheduler', jsonOptions({action:status.running ? 'stop' : 'start'}));
+    refreshSchedulerState();
+    updateSchedulerLive();
+  } catch (error) { toast(error.message, true); }
+}
+async function updateSchedulerLive() {
+  try {
+    const status = await api('/api/scheduler/live');
+    const current = status.current;
+    if (!current) {
+      $('schedProgressWrap').classList.add('hidden');
+      return;
+    }
+    $('schedProgressWrap').classList.remove('hidden');
+    $('schedStage').textContent = status.stage || 'Starting…';
+    $('schedProgressLabel').textContent = `${status.progress || 0}%`;
+    $('schedProgressBar').style.width = `${status.progress || 0}%`;
+    $('schedLive').textContent = `Generating: ${current.text}`;
+  } catch (_) {}
+}
+async function loadJobs() {
+  try {
+    const jobs = await api('/api/jobs');
+    $('jobList').innerHTML = jobs.map(job => `<button class="mb-1 flex w-full items-center gap-3 rounded-xl border border-transparent px-3 py-3 text-left transition hover:border-white/[.06] hover:bg-white/[.03]" type="button" data-open-job="${escapeHtml(job.job)}"><span class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-violet/10 text-violet">▶</span><span class="min-w-0 flex-1"><span class="block truncate text-xs font-semibold text-slate-200">${escapeHtml(job.title || job.job)}</span><span class="mt-1 block text-[10px] text-slate-500">${(job.videos || []).length} export${(job.videos || []).length === 1 ? '' : 's'}</span></span><span class="text-slate-600">›</span></button>`).join('') || '<div class="py-8 text-center text-sm text-slate-500">No projects found.</div>';
+  } catch (error) { toast(error.message, true); }
+}
+async function openJob(name) {
+  try {
+    const job = await api(`/api/job/${encodeURIComponent(name)}`);
+    currentScript = job.script;
+    currentScriptJob = name;
+    let html = `<div class="mb-4 flex flex-wrap items-start justify-between gap-3"><div><div class="text-[10px] font-bold uppercase tracking-[.15em] text-violet">Project</div><h2 class="mt-1 break-all text-lg font-semibold text-white">${escapeHtml(job.script?.title || name)}</h2><div class="mt-1 text-[11px] text-slate-500">${escapeHtml(name)}</div></div><div class="flex gap-2"><button class="btn-secondary text-xs" type="button" data-action="save-script">Save script</button><button class="btn-primary !px-3 !py-2 text-xs" type="button" data-action="rerender">Re-render</button></div></div>`;
+    for (const filename of job.videos || []) {
+      const src = `/api/video/${encodeURIComponent(name)}/${encodeURIComponent(filename)}`;
+      html += `<div class="mb-4 rounded-xl border border-white/[.06] bg-black/15 p-3"><video class="aspect-video w-full rounded-lg bg-black" controls preload="metadata" src="${src}"></video><div class="mt-2 truncate text-[11px] text-slate-500">${escapeHtml(filename)}</div></div>`;
+    }
+    if (job.script?.scenes) {
+      html += `<div class="mb-3 border-t border-white/[.06] pt-4"><div class="text-sm font-semibold text-slate-200">Script and storyboard</div><p class="mt-1 text-[11px] leading-5 text-slate-500">Edit narration or visual prompts. Save your changes before re-rendering.</p></div>`;
+      html += `<label class="mb-1.5 block text-[11px] font-semibold text-slate-400" for="editTitle">Video title</label><input id="editTitle" class="input-control mb-4" value="${escapeHtml(job.script.title || '')}">`;
+      html += job.script.scenes.map((scene, index) => `<article class="scene-editor mb-3"><div class="mb-3 flex items-center justify-between"><span class="badge badge-processing">Scene ${index + 1}</span><button class="btn-quiet !px-2 !py-1 text-[10px]" type="button" data-action="regen-scene" data-scene="${index}">Clear visual</button></div><label class="mb-1.5 block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Narration</label><textarea class="input-control" data-narration="${index}">${escapeHtml(scene.narration)}</textarea><label class="mb-1.5 mt-3 block text-[10px] font-semibold uppercase tracking-wide text-slate-500">Visual prompt</label><textarea class="input-control" data-visual="${index}">${escapeHtml(scene.visual_prompt)}</textarea></article>`).join('');
+    } else {
+      html += '<div class="py-8 text-center text-sm text-slate-500">No script was saved for this project.</div>';
+    }
+    $('jobEditor').innerHTML = html;
+  } catch (error) { toast(error.message, true); }
+}
+async function saveScript(showToast = true) {
+  if (!currentScript || !currentScriptJob) return;
+  currentScript.title = $('editTitle')?.value || currentScript.title;
+  currentScript.scenes.forEach((scene, index) => {
+    const narration = document.querySelector(`[data-narration="${index}"]`);
+    const visual = document.querySelector(`[data-visual="${index}"]`);
+    if (narration) scene.narration = narration.value;
+    if (visual) scene.visual_prompt = visual.value;
+  });
+  try {
+    await api(`/api/job/${encodeURIComponent(currentScriptJob)}/save_script`, jsonOptions(currentScript));
+    if (showToast) toast('Script saved.');
+  } catch (error) { toast(error.message, true); throw error; }
+}
+async function rerenderJob() {
+  if (!currentScriptJob) return;
+  try {
+    await saveScript(false);
+    navigate('create');
+    $('runCard').classList.remove('hidden');
+    $('genTitle').textContent = `Re-rendering ${currentScript.title || currentScriptJob}`;
+    $('genStatus').className = 'badge badge-processing';
+    $('genStatus').textContent = 'running';
+    $('log').classList.remove('hidden');
+    $('log').textContent = 'Reassembling video…';
+    await api(`/api/job/${encodeURIComponent(currentScriptJob)}/rerender`, jsonOptions({}));
+    pollStatus(currentScriptJob);
+    toast('Re-render started.');
+  } catch (error) { toast(error.message, true); }
+}
+async function clearSceneVisual(index) {
+  if (!currentScriptJob) return;
+  try {
+    await api(`/api/job/${encodeURIComponent(currentScriptJob)}/regen_scene`, jsonOptions({scene:index}));
+    toast(`Scene ${index + 1} visual cleared. Rerun the project to generate a replacement.`);
+  } catch (error) { toast(error.message, true); }
+}
+async function loadMusic() {
+  try {
+    const files = await api('/api/music');
+    $('musicCount').textContent = `${files.length} track${files.length === 1 ? '' : 's'}`;
+    $('musicList').innerHTML = files.map(file => `<div class="flex items-center gap-3 py-3"><div class="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-cyan/10 text-cyan">♫</div><span class="min-w-0 flex-1 truncate text-xs font-medium text-slate-300">${escapeHtml(file)}</span><button class="btn-danger !px-2.5 !py-1.5 text-[10px]" type="button" data-action="delete-music" data-name="${escapeHtml(file)}">Remove</button></div>`).join('') || '<div class="py-6 text-sm text-slate-500">No tracks uploaded yet.</div>';
+  } catch (error) { toast(error.message, true); }
+}
+async function uploadMusic() {
+  const file = $('musicFile').files[0];
+  if (!file) return toast('Choose an audio file first.', true);
+  const body = new FormData();
+  body.append('file', file);
+  try {
+    await api('/api/music/upload', {method:'POST', body});
+    $('musicFile').value = '';
+    toast('Music track uploaded.');
+    loadMusic();
+  } catch (error) { toast(error.message, true); }
+}
+async function deleteMusic(name) {
+  if (!confirm(`Remove “${name}” from the music library?`)) return;
+  try { await api('/api/music/delete', jsonOptions({name})); loadMusic(); }
+  catch (error) { toast(error.message, true); }
+}
+async function loadSettings() {
+  try {
+    const config = await api('/api/config');
+    $('sVoice').value = config.tts.voice || '';
+    $('sRate').value = config.tts.rate || '+0%';
+    $('sWpm').value = config.video.narration_wpm || 190;
+    $('sMusic').value = String(Boolean(config.video.music));
+    $('sVol').value = Math.round((config.video.music_volume ?? 0.5) * 100);
+    $('sVolLabel').textContent = `${$('sVol').value}%`;
+    const end = config.video.end_screen || {};
+    $('sEnd').value = String(end.enabled !== false);
+    $('sChannel').value = end.channel || '';
+    $('sTagline').value = end.tagline || '';
+    $('sEndSec').value = end.seconds || 4;
+    $('sStyle').value = config.video.style || '';
+    $('sStyleV').value = config.video.style_video || '';
+  } catch (error) { toast(error.message, true); }
+}
+async function saveSettings(event) {
+  event.preventDefault();
+  const wpm = Number($('sWpm').value);
+  if (!Number.isInteger(wpm) || wpm < 100 || wpm > 260) return toast('Draft pace must be between 100 and 260 WPM.', true);
+  try {
+    await api('/api/config', jsonOptions({
+      tts:{voice:$('sVoice').value.trim(), rate:$('sRate').value.trim()},
+      video:{narration_wpm:wpm, music:$('sMusic').value === 'true', music_volume:Number($('sVol').value) / 100, style:$('sStyle').value, style_video:$('sStyleV').value,
+        end_screen:{enabled:$('sEnd').value === 'true', channel:$('sChannel').value, tagline:$('sTagline').value, seconds:Number($('sEndSec').value)}}
+    }));
+    $('setMsg').textContent = 'Settings saved.';
+    setTimeout(() => { $('setMsg').textContent = ''; }, 2500);
+    toast('Studio settings saved.');
+  } catch (error) { toast(error.message, true); }
+}
+async function loadAdmin() {
+  try {
+    const config = await api('/api/config');
+    const ollama = config.ollama || {};
+    const comfy = config.comfy || {};
+    $('adminOllamaHost').value = ollama.host || '';
+    $('adminOllamaModel').value = ollama.model || '';
+    $('adminNumPredict').value = ollama.num_predict || 8192;
+    $('adminOllamaThink').value = String(Boolean(ollama.think));
+    $('adminComfyHost').value = comfy.host || '';
+    $('adminComfyTimeout').value = comfy.timeout_s || 1800;
+    $('adminImageMp').value = comfy.image?.fixed?.megapixels ?? 3;
+    $('adminVideoMp').value = comfy.video?.fixed?.megapixels ?? 3;
+    $('adminMsg').textContent = '';
+    $('adminTestResults').classList.add('hidden');
+  } catch (error) { toast(error.message, true); }
+}
+async function saveAdmin(event) {
+  event.preventDefault();
+  const timeout = Number($('adminComfyTimeout').value);
+  const imageMp = Number($('adminImageMp').value);
+  const videoMp = Number($('adminVideoMp').value);
+  const numPredict = Number($('adminNumPredict').value);
+  if (!Number.isInteger(numPredict) || numPredict < 512 || numPredict > 16384) return toast('Maximum output tokens must be between 512 and 16384.', true);
+  if (!Number.isFinite(timeout) || timeout < 60 || timeout > 7200) return toast('ComfyUI timeout must be between 60 and 7200 seconds.', true);
+  if (![imageMp, videoMp].every(value => Number.isFinite(value) && value >= 1 && value <= 4)) return toast('Generation resolution must be between 1 and 4 megapixels.', true);
+  $('adminMsg').textContent = 'Saving…';
+  try {
+    await api('/api/config', jsonOptions({
+      ollama:{host:$('adminOllamaHost').value.trim(), model:$('adminOllamaModel').value.trim(), think:$('adminOllamaThink').value === 'true', num_predict:numPredict},
+      comfy:{host:$('adminComfyHost').value.trim(), timeout_s:timeout, image:{megapixels:imageMp}, video:{megapixels:videoMp}}
+    }));
+    $('adminMsg').textContent = 'AI settings saved.';
+    toast('AI service settings saved.');
+  } catch (error) {
+    $('adminMsg').textContent = '';
+    toast(error.message, true);
+  }
+}
+async function testAdminConnections() {
+  const results = $('adminTestResults');
+  results.classList.remove('hidden');
+  results.textContent = 'Checking Ollama and ComfyUI…';
+  try {
+    const data = await api('/api/admin/test-connections', jsonOptions({}));
+    const ollama = data.ollama || {};
+    const comfy = data.comfy || {};
+    const ollamaTone = ollama.ok && ollama.model_installed ? 'text-mint' : (ollama.ok ? 'text-amber-300' : 'text-rose');
+    const ollamaDetail = ollama.ok
+      ? (ollama.model_installed ? `Connected · ${escapeHtml(ollama.model)} is installed` : `Connected, but ${escapeHtml(ollama.model || 'the selected model')} was not found in /api/tags`)
+      : `Connection failed · ${escapeHtml(ollama.error || 'unknown error')}`;
+    const comfyDetail = comfy.ok ? 'Connected' : `Connection failed · ${escapeHtml(comfy.error || 'unknown error')}`;
+    results.innerHTML = `<div class="${ollamaTone}"><strong>Ollama</strong><span class="ml-2">${ollamaDetail}</span></div><div class="mt-1 ${comfy.ok ? 'text-mint' : 'text-rose'}"><strong>ComfyUI</strong><span class="ml-2">${comfyDetail}</span></div>`;
+  } catch (error) {
+    results.innerHTML = `<span class="text-rose">${escapeHtml(error.message)}</span>`;
+  }
 }
 
-async function loadMusic(){
-  const files=await (await fetch('/api/music')).json();
-  $('musicList').innerHTML=files.map(f=>`<div class="mrow"><span>${f}</span>
-    <button class="btn danger sm" onclick="delMusic('${f}')">delete</button></div>`).join('')||'<div class="empty">no tracks</div>';
-}
-async function uploadMusic(){
-  const f=$('musicFile').files[0]; if(!f) return toast('pick a file');
-  const fd=new FormData(); fd.append('file',f);
-  await fetch('/api/music/upload',{method:'POST',body:fd}); $('musicFile').value=''; loadMusic();
-}
-async function delMusic(n){
-  await fetch('/api/music/delete',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n})}); loadMusic();
-}
-async function loadSettings(){
-  const c=await (await fetch('/api/config')).json();
-  $('sVoice').value=c.tts.voice; $('sRate').value=c.tts.rate;
-  $('sMusic').value=String(!!c.video.music); $('sVol').value=c.video.music_volume;
-  const es=c.video.end_screen||{};
-  $('sEnd').value=String(es.enabled!==false); $('sChannel').value=es.channel||'';
-  $('sTagline').value=es.tagline||'for more videos like this'; $('sEndSec').value=es.seconds||4;
-  $('sStyle').value=c.video.style; $('sStyleV').value=c.video.style_video;
-}
-async function saveSettings(){
-  await fetch('/api/config',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({
-    tts:{voice:$('sVoice').value,rate:$('sRate').value},
-    video:{music:$('sMusic').value==='true',music_volume:+$('sVol').value,style:$('sStyle').value,style_video:$('sStyleV').value,
-      end_screen:{enabled:$('sEnd').value==='true',channel:$('sChannel').value,tagline:$('sTagline').value,seconds:+$('sEndSec').value}}})});
-  $('setMsg').textContent='saved'; $('setMsg').className='status st-done'; setTimeout(()=>$('setMsg').textContent='',2000);
-}
-refreshSchedState(); loadDash();
-setInterval(()=>{ if(!$('p-dash').style.display) loadDash(); },10000);
+$('createForm').addEventListener('submit', createVideo);
+$('ideasBulk').addEventListener('input', () => {});
+$('addIdeasBtn').addEventListener('click', addIdeas);
+$('refreshIdeas').addEventListener('click', loadIdeas);
+$('saveSched').addEventListener('click', saveScheduler);
+$('toggleSched').addEventListener('click', toggleScheduler);
+$('refreshJobs').addEventListener('click', loadJobs);
+$('uploadMusic').addEventListener('click', uploadMusic);
+$('settingsForm').addEventListener('submit', saveSettings);
+$('adminForm').addEventListener('submit', saveAdmin);
+$('testAiBtn').addEventListener('click', testAdminConnections);
+$('sVol').addEventListener('input', () => { $('sVolLabel').textContent = `${$('sVol').value}%`; });
+$('ideaInput').addEventListener('input', () => { $('ideaCount').textContent = `${$('ideaInput').value.length} / 4000`; });
+$('openMobileMenu').addEventListener('click', () => showMobileMenu(true));
+$('closeMobileMenu').addEventListener('click', () => showMobileMenu(false));
+$('mobileBackdrop').addEventListener('click', () => showMobileMenu(false));
+document.body.addEventListener('click', event => {
+  const nav = event.target.closest('[data-nav]');
+  if (nav) { navigate(nav.dataset.nav); return; }
+  const open = event.target.closest('[data-open-job]');
+  if (open) { navigate('library'); openJob(open.dataset.openJob); return; }
+  const button = event.target.closest('[data-action]');
+  if (!button) return;
+  const {action} = button.dataset;
+  if (action === 'run-idea') runIdea(button.dataset.id);
+  if (action === 'delete-idea') deleteIdea(button.dataset.id);
+  if (action === 'save-script') saveScript();
+  if (action === 'rerender') rerenderJob();
+  if (action === 'regen-scene') clearSceneVisual(Number(button.dataset.scene));
+  if (action === 'delete-music') deleteMusic(button.dataset.name);
+});
 
-// ---- live generation progress ----
-let livePoller = setInterval(pollLive, 1500);
-function pollLive(){
-  fetch('/api/scheduler/live').then(r=>r.json()).then(s=>{
-    const active = s.running && s.current;
-    $('liveCard').style.display = active ? '' : 'none';
-    if (!active) return;
-    $('liveTitle').textContent = s.current.text;
-    $('liveBar').style.width = (s.progress||0) + '%';
-    $('liveStage').textContent = (s.stage||'starting...') + '  \u2014  ' + (s.progress||0) + '%';
-    $('liveLog').innerHTML = s.logs.map(l=>`<div style="font:12px/1.5 Consolas,monospace;color:#93e2a4">${l[0].slice(11)} ${l[1]}</div>`).join('');
-  }).catch(()=>{});
-}
-pollLive();
+loadDashboard();
+refreshSchedulerState();
+setInterval(() => { if (currentView === 'overview') loadDashboard(); updateSchedulerLive(); }, 12000);
 </script>
 </body>
 </html>

@@ -3,3 +3,4 @@ pyyaml
 feedparser
 trafilatura
 edge-tts
+flask

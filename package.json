@@ -1,0 +1,16 @@
+{
+  "name": "idea2video-studio-ui",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build:css": "tailwindcss -i ./static/src/app.css -o ./static/app.css --minify",
+    "watch:css": "tailwindcss -i ./static/src/app.css -o ./static/app.css --watch"
+  },
+  "devDependencies": {
+    "@tailwindcss/cli": "^4.1.14",
+    "tailwindcss": "^4.1.14"
+  },
+  "overrides": {
+    "@parcel/watcher": "^2.6.0"
+  }
+}

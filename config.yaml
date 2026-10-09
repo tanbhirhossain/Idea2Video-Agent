@@ -1,6 +1,8 @@
 ollama:
   host: http://localhost:11434
   model: qwen3.5:latest
+  think: false
+  num_predict: 8192
 comfy:
   host: http://127.0.0.1:8188
   timeout_s: 1800
@@ -23,7 +25,7 @@ comfy:
       - '13'
       - megapixels
     fixed:
-      megapixels: 2
+      megapixels: 3
       negative: text, captions, watermark, logo, blurry, low quality, deformed hands,
         extra fingers, cartoon
     aspect_fallback:
@@ -51,7 +53,7 @@ comfy:
       - 140:139
       - value
     fixed:
-      megapixels: 2
+      megapixels: 3
       turbo: false
     max_clip_s: 15
     aspect_fallback:
@@ -62,6 +64,9 @@ tts:
   rate: +0%
 video:
   fps: 30
+  scene_crf: 16
+  final_crf: 16
+  render_preset: slow
   transition_s: 0.5
   transitions:
   - fade
@@ -72,12 +77,16 @@ video:
   - fadeblack
   - zoomin
   scene_seconds: 6
-  style: cinematic lighting, ultra detailed, 4k, professional color grading
-  style_video: Realistic live action cinematic look, practical film photography, anamorphic
-    lens, shallow depth of field, film grain, restrained premium colour grading, natural
-    fluid movement
+  narration_wpm: 190
+  duration_tolerance_s: 2.0
+  duration_tolerance_ratio: 0.04
+  style: cinematic documentary photography, natural skin tones, realistic anatomy,
+    crisp subject detail, balanced exposure, soft filmic contrast, no oversharpening
+  style_video: Photoreal live-action documentary cinema, natural skin tones and anatomy,
+    physically plausible lighting, stable exposure, crisp focal subject, subtle film
+    texture, realistic motion, no artificial glow
   music: true
-  music_volume: 1
+  music_volume: 0.6
   end_screen:
     enabled: true
     channel: Truth Unboxed
