@@ -32,13 +32,18 @@ Resume or tweak a job with `--job output/job_xxx`. `script.json` is reused when 
 python webui.py
 ```
 
+<<<<<<< HEAD
 Open `http://127.0.0.1:5000`. The studio supports direct generation, idea queues, scheduling, script review, exports, and background music. Re-rendering a saved project remeasures narration and attempts to correct duration drift while reusing the saved visual assets (unless the script was manually edited). Tailwind CSS 4 is compiled into `static/app.css`, so the UI has no runtime CDN dependency. To rebuild the CSS after editing the UI:
+=======
+Open `http://127.0.0.1:5000`. The studio supports direct generation, idea queues, scheduling, script review, exports, and background music. Tailwind CSS 4 is compiled into `static/app.css`, so the UI has no runtime CDN dependency. To rebuild the CSS after editing the UI:
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 
 ```bash
 npm install
 npm run build:css
 ```
 
+<<<<<<< HEAD
 ## AI and visual-generation settings
 
 Open **Admin panel → AI services** to change the Ollama API base URL and model tag, maximum output tokens, or the ComfyUI URL, timeout, and image/video generation megapixels. Longer scripts need more output tokens; the default is 8192, and the client retries with a larger budget if Ollama reports a length-truncated response. Duration revisions return narration only and reuse the existing visual prompts, reducing JSON output size. Use **Test connections** to check whether both services respond and whether the selected Ollama model is installed. Higher megapixel values need more GPU memory; the generation path keeps its lower-resolution fallback for memory errors. This project currently supports Ollama and ComfyUI; it does not store third-party API keys or configure OpenAI-compatible providers.
@@ -52,6 +57,14 @@ Drop `.mp3`, `.wav`, `.ogg`, `.m4a`, or `.flac` files into `music/` (or upload t
 ## Notes
 
 - Edge TTS retries transient no-audio responses twice, validates the MP3/WAV files, and reports the voice/text length if synthesis still fails.
+=======
+## Background music
+
+Drop `.mp3`, `.wav`, `.ogg`, `.m4a`, or `.flac` files into `music/` (or upload through the UI). A random track is mixed under the narration; volume is controlled in **Settings → Music volume**.
+
+## Notes
+
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 - `ollama.think: false` is used for structured script responses; if an Ollama/model version still returns an empty or malformed response, the client retries once with thinking enabled and still validates the JSON before continuing.
 - `video.narration_wpm` is the initial word-budget estimate. Actual voiceover duration is measured and the generated script is refined when needed.
 - `video.duration_tolerance_s` and `video.duration_tolerance_ratio` control how much natural TTS timing variation is accepted without another script pass.

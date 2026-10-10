@@ -5,9 +5,13 @@ from unittest.mock import MagicMock, patch
 from core.script_gen import (
     _call_ollama,
     _decode_json_content,
+<<<<<<< HEAD
     _merge_revised_narration,
     make_script,
     revise_script_for_duration,
+=======
+    make_script,
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     script_content_hash,
     script_was_edited,
     story_plan,
@@ -86,6 +90,7 @@ class StoryPlanTests(unittest.TestCase):
         self.assertIn("final 15 percent", prompt)
         self.assertIn("do not add greetings", prompt.lower())
 
+<<<<<<< HEAD
     @patch("core.script_gen._call_ollama")
     def test_duration_revision_sends_narration_only_and_preserves_visual_prompts(self, call_model):
         call_model.side_effect = [
@@ -155,6 +160,8 @@ class StoryPlanTests(unittest.TestCase):
         self.assertIn("Middle beat.", combined)
         self.assertIn("Final beat.", combined)
 
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     def test_script_edit_detection_ignores_private_metadata(self):
         script = {
             "title": "Title",
@@ -177,6 +184,7 @@ class OllamaResponseTests(unittest.TestCase):
         self.assertEqual(result, payload)
         self.assertIs(post.call_args.kwargs["json"]["think"], False)
         self.assertEqual(post.call_args.kwargs["json"]["format"], "json")
+<<<<<<< HEAD
         self.assertEqual(post.call_args.kwargs["json"]["options"]["num_predict"], 8192)
 
     def test_length_truncation_retries_with_a_larger_budget_without_enabling_thinking(self):
@@ -200,6 +208,8 @@ class OllamaResponseTests(unittest.TestCase):
         self.assertEqual(second["options"]["num_predict"], 4096)
         self.assertIs(first["think"], False)
         self.assertIs(second["think"], False)
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 
     def test_parser_accepts_fences_and_short_preamble(self):
         result = _decode_json_content("```json\n{\"title\":\"T\"}\n```")

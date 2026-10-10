@@ -20,7 +20,11 @@ from .subtitles import build_ass
 from .timing import duration_tolerance, narration_target_seconds
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
+<<<<<<< HEAD
 MAX_DURATION_REVISIONS = 3
+=======
+MAX_DURATION_REVISIONS = 2
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 
 
 def resolve_size(cfg, fmt, custom):
@@ -51,6 +55,16 @@ def _clear_scene_assets(job: Path) -> None:
                 path.unlink()
 
 
+<<<<<<< HEAD
+=======
+def _clear_visual_assets(job: Path) -> None:
+    for pattern in ("m[0-9][0-9][0-9].*", "c[0-9][0-9][0-9].mp4"):
+        for path in job.glob(pattern):
+            if path.is_file():
+                path.unlink()
+
+
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 def _audio_signature(text: str, voice: str, rate: str) -> str:
     raw = "\0".join((text, voice, rate)).encode("utf-8")
     return hashlib.sha256(raw).hexdigest()
@@ -76,6 +90,7 @@ def prepare_voiceover(job: Path, scenes: list[dict], cfg: dict, log=print) -> tu
                 cached_signature = None
         if not wav.exists() or cached_signature != signature:
             log(f"voice {i + 1}/{len(scenes)}: synthesizing narration ...")
+<<<<<<< HEAD
             try:
                 tts.synth(text, voice, rate, mp3, wav)
             except Exception as exc:
@@ -83,6 +98,9 @@ def prepare_voiceover(job: Path, scenes: list[dict], cfg: dict, log=print) -> tu
                     f"Text-to-speech failed for scene {i + 1}/{len(scenes)} "
                     f"(voice={voice!r}, {len(text)} characters): {exc}"
                 ) from exc
+=======
+            tts.synth(text, voice, rate, mp3, wav)
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
             meta_path.write_text(json.dumps({"signature": signature}, indent=2), encoding="utf-8")
         duration = tts.probe_duration(wav)
         durations.append(duration)
@@ -167,12 +185,20 @@ def build(cfg, job: Path, source: str, mode: str, fmt: str, custom=None,
         revisions += 1
         script = revise_script_for_duration(
             cfg, source, mode, fmt, requested_seconds, target_narration,
+<<<<<<< HEAD
             actual_narration, language, script, revisions, log=log,
         )
         if isinstance(script.get("_generator"), dict):
             script["_generator"]["output_size"] = [W, H]
         # Duration revisions update narration only and retain visual prompts, so
         # already-generated scene media can be reused without another GPU pass.
+=======
+            actual_narration, language, script, revisions,
+        )
+        if isinstance(script.get("_generator"), dict):
+            script["_generator"]["output_size"] = [W, H]
+        _clear_visual_assets(job)
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
         _save_script(script_path, script)
         scenes = script["scenes"]
         durations, wavs = prepare_voiceover(job, scenes, cfg, log)
@@ -234,11 +260,16 @@ def build(cfg, job: Path, source: str, mode: str, fmt: str, custom=None,
 
         kind = "image" if media.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp") else "video"
         clip = job / f"c{tag}.mp4"
+<<<<<<< HEAD
         render.scene_clip(
             media.resolve(), kind, duration + video_cfg["transition_s"],
             W, H, video_cfg["fps"], clip, i,
             crf=video_cfg.get("scene_crf", 16), preset=video_cfg.get("render_preset", "slow"),
         )
+=======
+        render.scene_clip(media.resolve(), kind, duration + video_cfg["transition_s"],
+                          W, H, video_cfg["fps"], clip, i)
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
         clips.append(clip)
 
     # 4. Captions and final assembly. The configured runtime includes the outro.
@@ -248,9 +279,13 @@ def build(cfg, job: Path, source: str, mode: str, fmt: str, custom=None,
     log("render: assembling final video ...")
     music = render.pick_music(PROJECT_ROOT / "music") if video_cfg.get("music", True) else None
     if music:
+<<<<<<< HEAD
         log(f"render: background music: {music.name} (level {100 * video_cfg.get('music_volume', 0.5):.0f}%, gentle voice ducking on)")
     elif video_cfg.get("music", True):
         log("render: music is enabled, but no playable audio tracks were found in the project music folder")
+=======
+        log(f"render: background music: {music.name}")
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     end_screen_cfg = video_cfg.get("end_screen") or {}
     end_screen = end_screen_cfg if (end_screen_cfg.get("enabled") and str(end_screen_cfg.get("channel", "")).strip()) else None
     if end_screen:
@@ -258,10 +293,15 @@ def build(cfg, job: Path, source: str, mode: str, fmt: str, custom=None,
     render.assemble(
         job, clips, wavs, durations, "subs.ass", final_name,
         video_cfg["transition_s"], video_cfg["transitions"],
+<<<<<<< HEAD
         music_path=music, music_volume=video_cfg.get("music_volume", 0.5),
         end_screen=end_screen,
         video_crf=video_cfg.get("final_crf", 16),
         video_preset=video_cfg.get("render_preset", "slow"),
+=======
+        music_path=music, music_volume=video_cfg.get("music_volume", 0.15),
+        end_screen=end_screen,
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     )
     final = job / final_name
     actual_final = render.duration_of(final)

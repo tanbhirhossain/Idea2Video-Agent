@@ -54,6 +54,7 @@
         Music library
       </button>
       <button class="nav-link flex items-center gap-3 rounded-xl px-3 py-2.5 text-left text-[13px] font-semibold" type="button" data-nav="settings">
+<<<<<<< HEAD
         <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3.1 1.3v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3.1-1.3l-.1.1a1.8 1.8 0 1 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-1.3-3.1h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 1.3-3.1l-.1-.1a1.8 1.8 0 1 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3.1-1.3v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3.1 1.3l.1-.1a1.8 1.8 0 1 1 2.5 2.5l.1.1a1.8 1.8 0 0 0 1.3 3.1h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1.3 3.1Z"/></svg>
         Settings
       </button>
@@ -61,6 +62,11 @@
         <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M12 3.5 19 6v5.2c0 4.4-2.8 7.5-7 9.3-4.2-1.8-7-4.9-7-9.3V6l7-2.5Z"/><path d="m9 12 2 2 4-4"/></svg>
         Admin panel
       </button>
+=======
+        <svg viewBox="0 0 24 24" class="h-[18px] w-[18px]" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="3"/><path d="m19.4 15 .1.1a1.8 1.8 0 1 1-2.5 2.5l-.1-.1a1.8 1.8 0 0 0-3.1 1.3v.2a1.8 1.8 0 1 1-3.6 0v-.2a1.8 1.8 0 0 0-3.1-1.3l-.1.1a1.8 1.8 0 1 1-2.5-2.5l.1-.1a1.8 1.8 0 0 0-1.3-3.1h-.2a1.8 1.8 0 1 1 0-3.6h.2a1.8 1.8 0 0 0 1.3-3.1l-.1-.1a1.8 1.8 0 1 1 2.5-2.5l.1.1a1.8 1.8 0 0 0 3.1-1.3v-.2a1.8 1.8 0 1 1 3.6 0v.2a1.8 1.8 0 0 0 3.1 1.3l.1-.1a1.8 1.8 0 1 1 2.5 2.5l-.1.1a1.8 1.8 0 0 0 1.3 3.1h.2a1.8 1.8 0 1 1 0 3.6h-.2a1.8 1.8 0 0 0-1.3 3.1Z"/></svg>
+        Settings
+      </button>
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     </nav>
 
     <div class="mt-auto">
@@ -267,7 +273,11 @@
               <div><label for="sVoice" class="mb-2 block text-xs font-semibold text-slate-300">Text-to-speech voice</label><input id="sVoice" class="input-control" placeholder="en-US-AndrewMultilingualNeural"></div>
               <div class="grid gap-3 sm:grid-cols-2"><div><label for="sRate" class="mb-2 block text-xs font-semibold text-slate-300">Voice rate adjustment</label><input id="sRate" class="input-control" placeholder="+0%"></div><div><label for="sWpm" class="mb-2 block text-xs font-semibold text-slate-300">Draft pace estimate (WPM)</label><input id="sWpm" class="input-control" type="number" min="100" max="260" step="5"></div></div>
               <div><label for="sMusic" class="mb-2 block text-xs font-semibold text-slate-300">Background music</label><select id="sMusic" class="input-control"><option value="true">Enabled</option><option value="false">Disabled</option></select></div>
+<<<<<<< HEAD
               <div><label for="sVol" class="mb-2 block text-xs font-semibold text-slate-300">Music volume · <span id="sVolLabel">50%</span></label><input id="sVol" class="w-full accent-violet" type="range" min="0" max="100" step="1" aria-label="Background music volume percentage"><p class="mt-1 text-[10px] text-slate-500">Custom mix level: 0% muted · 50% balanced · 100% loudest.</p></div>
+=======
+              <div><label for="sVol" class="mb-2 block text-xs font-semibold text-slate-300">Music volume · <span id="sVolLabel">0.15</span></label><input id="sVol" class="w-full accent-violet" type="range" min="0" max="1" step="0.01"></div>
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
             </div>
             <div class="space-y-4">
               <div class="border-b border-white/[.06] pb-3"><h2 class="text-sm font-semibold text-slate-100">Visual direction</h2><p class="mt-1 text-xs text-slate-500">Applied consistently across the scenes in a video.</p></div>
@@ -282,6 +292,7 @@
           <div class="mt-6 flex flex-wrap items-center gap-3 border-t border-white/[.06] pt-5"><button class="btn-primary" type="submit">Save settings</button><span id="setMsg" class="text-xs text-mint" role="status"></span></div>
         </form>
       </section>
+<<<<<<< HEAD
 
       <!-- Admin / AI services -->
       <section class="page-view hidden" data-page-view="admin">
@@ -307,6 +318,8 @@
           <div id="adminTestResults" class="mt-4 hidden rounded-xl border border-white/[.06] bg-black/15 p-4 text-xs leading-6" aria-live="polite"></div>
         </form>
       </section>
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     </main>
   </div>
 
@@ -316,7 +329,11 @@
 const $ = (id) => document.getElementById(id);
 const escapeHtml = (value) => String(value ?? '').replace(/[&<>"']/g, (char) => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[char]));
 const STATUS_CLASS = {pending:'badge-pending', processing:'badge-processing', completed:'badge-completed', error:'badge-error'};
+<<<<<<< HEAD
 const PAGE_NAMES = {overview:['Workspace','Overview'],create:['Studio','Create video'],queue:['Workspace','Idea queue'],scheduler:['Automation','Scheduler'],library:['Exports','Video library'],music:['Studio tools','Music library'],settings:['Preferences','Studio settings'],admin:['Administration','AI services']};
+=======
+const PAGE_NAMES = {overview:['Workspace','Overview'],create:['Studio','Create video'],queue:['Workspace','Idea queue'],scheduler:['Automation','Scheduler'],library:['Exports','Video library'],music:['Studio tools','Music library'],settings:['Preferences','Studio settings']};
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 let currentView = 'overview';
 let currentScript = null;
 let currentScriptJob = null;
@@ -356,7 +373,10 @@ function navigate(view) {
   if (view === 'library') loadJobs();
   if (view === 'music') loadMusic();
   if (view === 'settings') loadSettings();
+<<<<<<< HEAD
   if (view === 'admin') loadAdmin();
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 }
 function statusBadge(status) {
   const cls = STATUS_CLASS[status] || 'badge-processing';
@@ -627,8 +647,13 @@ async function loadSettings() {
     $('sRate').value = config.tts.rate || '+0%';
     $('sWpm').value = config.video.narration_wpm || 190;
     $('sMusic').value = String(Boolean(config.video.music));
+<<<<<<< HEAD
     $('sVol').value = Math.round((config.video.music_volume ?? 0.5) * 100);
     $('sVolLabel').textContent = `${$('sVol').value}%`;
+=======
+    $('sVol').value = config.video.music_volume ?? 0.15;
+    $('sVolLabel').textContent = Number($('sVol').value).toFixed(2);
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     const end = config.video.end_screen || {};
     $('sEnd').value = String(end.enabled !== false);
     $('sChannel').value = end.channel || '';
@@ -645,13 +670,18 @@ async function saveSettings(event) {
   try {
     await api('/api/config', jsonOptions({
       tts:{voice:$('sVoice').value.trim(), rate:$('sRate').value.trim()},
+<<<<<<< HEAD
       video:{narration_wpm:wpm, music:$('sMusic').value === 'true', music_volume:Number($('sVol').value) / 100, style:$('sStyle').value, style_video:$('sStyleV').value,
+=======
+      video:{narration_wpm:wpm, music:$('sMusic').value === 'true', music_volume:Number($('sVol').value), style:$('sStyle').value, style_video:$('sStyleV').value,
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
         end_screen:{enabled:$('sEnd').value === 'true', channel:$('sChannel').value, tagline:$('sTagline').value, seconds:Number($('sEndSec').value)}}
     }));
     $('setMsg').textContent = 'Settings saved.';
     setTimeout(() => { $('setMsg').textContent = ''; }, 2500);
     toast('Studio settings saved.');
   } catch (error) { toast(error.message, true); }
+<<<<<<< HEAD
 }
 async function loadAdmin() {
   try {
@@ -709,6 +739,8 @@ async function testAdminConnections() {
   } catch (error) {
     results.innerHTML = `<span class="text-rose">${escapeHtml(error.message)}</span>`;
   }
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 }
 
 $('createForm').addEventListener('submit', createVideo);
@@ -720,9 +752,13 @@ $('toggleSched').addEventListener('click', toggleScheduler);
 $('refreshJobs').addEventListener('click', loadJobs);
 $('uploadMusic').addEventListener('click', uploadMusic);
 $('settingsForm').addEventListener('submit', saveSettings);
+<<<<<<< HEAD
 $('adminForm').addEventListener('submit', saveAdmin);
 $('testAiBtn').addEventListener('click', testAdminConnections);
 $('sVol').addEventListener('input', () => { $('sVolLabel').textContent = `${$('sVol').value}%`; });
+=======
+$('sVol').addEventListener('input', () => { $('sVolLabel').textContent = Number($('sVol').value).toFixed(2); });
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 $('ideaInput').addEventListener('input', () => { $('ideaCount').textContent = `${$('ideaInput').value.length} / 4000`; });
 $('openMobileMenu').addEventListener('click', () => showMobileMenu(true));
 $('closeMobileMenu').addEventListener('click', () => showMobileMenu(false));

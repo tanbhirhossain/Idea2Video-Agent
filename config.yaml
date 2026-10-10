@@ -2,7 +2,10 @@ ollama:
   host: http://localhost:11434
   model: qwen3.5:latest
   think: false
+<<<<<<< HEAD
   num_predict: 8192
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 comfy:
   host: http://127.0.0.1:8188
   timeout_s: 1800
@@ -80,11 +83,18 @@ video:
   narration_wpm: 190
   duration_tolerance_s: 2.0
   duration_tolerance_ratio: 0.04
+<<<<<<< HEAD
   style: cinematic documentary photography, natural skin tones, realistic anatomy,
     crisp subject detail, balanced exposure, soft filmic contrast, no oversharpening
   style_video: Photoreal live-action documentary cinema, natural skin tones and anatomy,
     physically plausible lighting, stable exposure, crisp focal subject, subtle film
     texture, realistic motion, no artificial glow
+=======
+  style: cinematic lighting, ultra detailed, 4k, professional color grading
+  style_video: Realistic live action cinematic look, practical film photography, anamorphic
+    lens, shallow depth of field, film grain, restrained premium colour grading, natural
+    fluid movement
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
   music: true
   music_volume: 0.6
   end_screen:

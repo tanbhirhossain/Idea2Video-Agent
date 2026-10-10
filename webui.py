@@ -13,9 +13,14 @@ from flask import Flask, jsonify, render_template, request, send_file
 from werkzeug.utils import secure_filename
 
 from core import ingest, render, tasks
+<<<<<<< HEAD
 from core.pipeline import MAX_DURATION_REVISIONS, build, prepare_voiceover, resolve_size
 from core.script_gen import revise_script_for_duration, script_was_edited
 from core.timing import duration_tolerance, narration_target_seconds
+=======
+from core.pipeline import build, prepare_voiceover, resolve_size
+from core.timing import narration_target_seconds
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
 
 ROOT = Path(__file__).resolve().parent
 app = Flask(__name__, static_folder=str(ROOT / "static"), static_url_path="/static")
@@ -155,6 +160,7 @@ def api_config():
         return jsonify(cfg())
     c = cfg()
     body = request.get_json(silent=True) or {}
+<<<<<<< HEAD
     try:
         if "ollama" in body and isinstance(body["ollama"], dict):
             ollama = body["ollama"]
@@ -211,6 +217,28 @@ def api_config():
                 c["video"]["end_screen"] = es
     except (TypeError, ValueError) as exc:
         return jsonify({"error": str(exc)}), 400
+=======
+    for section in ("tts",):
+        if section in body and isinstance(body[section], dict):
+            c[section].update(body[section])
+    if "video" in body and isinstance(body["video"], dict):
+        for key in ("music", "music_volume", "scene_seconds", "narration_wpm", "style", "style_video"):
+            if key in body["video"]:
+                c["video"][key] = body["video"][key]
+        try:
+            c["video"]["music_volume"] = min(1.0, max(0.0, float(c["video"].get("music_volume", 0.15))))
+            c["video"]["narration_wpm"] = min(260, max(100, int(c["video"].get("narration_wpm", 190))))
+        except (TypeError, ValueError) as exc:
+            return jsonify({"error": f"Invalid generation setting: {exc}"}), 400
+        if "end_screen" in body["video"] and isinstance(body["video"]["end_screen"], dict):
+            es = c["video"].get("end_screen") or {}
+            es.update(body["video"]["end_screen"])
+            try:
+                es["seconds"] = min(15, max(1, int(es.get("seconds", 4))))
+            except (TypeError, ValueError):
+                return jsonify({"error": "Outro length must be a number from 1 to 15 seconds."}), 400
+            c["video"]["end_screen"] = es
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     save_cfg(c)
     return jsonify({"ok": True})
 
@@ -363,7 +391,11 @@ def api_job(name):
 
 @app.route("/api/job/<name>/rerender", methods=["POST"])
 def api_rerender(name):
+<<<<<<< HEAD
     """Fit saved narration to its target, then export again using saved visuals."""
+=======
+    """Refresh narration, scene timing, subtitles, and the final export from a saved script."""
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     body = request.get_json(silent=True) or {}
     job_name = Path(name).name
     job = ROOT / "output" / job_name
@@ -382,9 +414,12 @@ def api_rerender(name):
             W, H = int(output_size[0]), int(output_size[1])
         else:
             W, H = resolve_size(c, fmt, None)
+<<<<<<< HEAD
         requested = float(metadata["requested_seconds"]) if metadata.get("requested_seconds") is not None else None
         target_narration = narration_target_seconds(c["video"], requested) if requested else None
         edited_by_user = script_was_edited(script)
+=======
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
     except (OSError, json.JSONDecodeError, TypeError, ValueError, KeyError) as exc:
         return jsonify({"error": f"could not prepare re-render: {exc}"}), 400
 
@@ -396,6 +431,7 @@ def api_rerender(name):
         try:
             v = c["video"]
             log_line = lambda message: log(job_name, message)
+<<<<<<< HEAD
             current_script = script
             durations, wavs = prepare_voiceover(job, current_script["scenes"], c, log_line)
             revisions = int((current_script.get("_generator") or {}).get("duration_revisions", 0) or 0)
@@ -435,6 +471,9 @@ def api_rerender(name):
                 else:
                     log_line(f"script: narration fitted to {actual_narration:.1f}s (target {target_narration:.1f}s)")
 
+=======
+            durations, wavs = prepare_voiceover(job, script["scenes"], c, log_line)
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
             clips = []
             for index, duration in enumerate(durations):
                 tag = f"{index:03d}"
@@ -444,6 +483,7 @@ def api_rerender(name):
                 media = media_candidates[0]
                 kind = "image" if media.suffix.lower() in (".png", ".jpg", ".jpeg", ".webp") else "video"
                 clip = job / f"c{tag}.mp4"
+<<<<<<< HEAD
                 render.scene_clip(
                     media.resolve(), kind, duration + v["transition_s"], W, H, v["fps"], clip, index,
                     crf=v.get("scene_crf", 16), preset=v.get("render_preset", "slow"),
@@ -460,14 +500,31 @@ def api_rerender(name):
                 log_line("render: music is enabled, but no playable audio tracks were found")
             else:
                 log_line("render: reassembling without background music")
+=======
+                render.scene_clip(media.resolve(), kind, duration + v["transition_s"], W, H, v["fps"], clip, index)
+                clips.append(clip)
+            from core.subtitles import build_ass
+            build_ass(script["scenes"], durations, W, H, c, job / "subs.ass")
+            safe_title = re.sub(r"[^\w\-]+", "_", str(script.get("title", "video"))[:50]) or "video"
+            name_out = f"{safe_title}_{W}x{H}.mp4"
+            music = render.pick_music(ROOT / "music") if v.get("music", True) else None
+            log_line(f"render: reassembling (music: {music.name if music else 'none'})")
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
             es = v.get("end_screen") or {}
             end_screen = {**es, "W": W, "H": H} if (es.get("enabled") and str(es.get("channel", "")).strip()) else None
             render.assemble(job, clips, wavs, durations, "subs.ass", name_out,
                             v["transition_s"], v["transitions"], music_path=music,
+<<<<<<< HEAD
                             music_volume=v.get("music_volume", 0.5), end_screen=end_screen,
                             video_crf=v.get("final_crf", 16), video_preset=v.get("render_preset", "slow"))
             actual = render.duration_of(job / name_out)
             log_line(f"render: final duration {actual:.1f}s" + (f" (target {requested:.1f}s)" if requested else ""))
+=======
+                            music_volume=v.get("music_volume", 0.15), end_screen=end_screen)
+            actual = render.duration_of(job / name_out)
+            requested = metadata.get("requested_seconds")
+            log_line(f"render: final duration {actual:.1f}s" + (f" (target {float(requested):.1f}s)" if requested else ""))
+>>>>>>> 09673f3e04e823228dae1a54fa4c6fd47dcdebff
             JOBS[job_name]["status"] = "done"
             JOBS[job_name]["final"] = name_out
         except Exception as exc:
