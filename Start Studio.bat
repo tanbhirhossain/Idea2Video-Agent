@@ -1,10 +1,22 @@
 @echo off
 title Idea2Video Studio
-cd /d "S:\VidTools\idea2video (1)\idea2video"
+cd /d "%~dp0"
 
 echo ============================================
 echo   Idea2Video Studio - starting services...
 echo ============================================
+
+REM ---- TTS fallback dependency ----
+python -c "import gtts" >nul 2>&1
+if errorlevel 1 (
+    echo [..] Installing Python requirements for the Google TTS fallback...
+    python -m pip install -r requirements.txt
+    if errorlevel 1 (
+        echo [!!] Dependency installation failed. Run: python -m pip install -r requirements.txt
+        pause
+        exit /b 1
+    )
+)
 
 REM ---- 1. Ollama (port 11434) ----
 powershell -NoProfile -Command "try { (Invoke-WebRequest -Uri 'http://localhost:11434' -TimeoutSec 2 -UseBasicParsing) | Out-Null; exit 0 } catch { exit 1 }" >nul 2>&1

@@ -1,9 +1,11 @@
 ollama:
   host: http://localhost:11434
   model: qwen3.5:latest
+  think: false
+  num_predict: 8192
 comfy:
   host: http://127.0.0.1:8188
-  timeout_s: 1800
+  timeout_s: 7200
   image:
     workflow: workflows/image_qwen_image_2_1_t2i.json
     map:
@@ -23,7 +25,7 @@ comfy:
       - '13'
       - megapixels
     fixed:
-      megapixels: 2
+      megapixels: 3
       negative: text, captions, watermark, logo, blurry, low quality, deformed hands,
         extra fingers, cartoon
     aspect_fallback:
@@ -51,17 +53,26 @@ comfy:
       - 140:139
       - value
     fixed:
-      megapixels: 2
+      megapixels: 1.0
       turbo: false
+    min_clip_s: 5
     max_clip_s: 15
+    fallback_megapixels:
+    - 0.7
+    - 0.45
     aspect_fallback:
       '9:16': 9:16 (Portrait Widescreen)
       '16:9': 16:9 (Widescreen)
 tts:
   voice: en-US-AndrewMultilingualNeural
+  bangla_voice: bn-BD-NabanitaNeural
   rate: +0%
+  bangla_rate: -5%
 video:
   fps: 30
+  scene_crf: 16
+  final_crf: 16
+  render_preset: slow
   transition_s: 0.5
   transitions:
   - fade
@@ -72,12 +83,14 @@ video:
   - fadeblack
   - zoomin
   scene_seconds: 6
-  style: cinematic lighting, ultra detailed, 4k, professional color grading
-  style_video: Realistic live action cinematic look, practical film photography, anamorphic
-    lens, shallow depth of field, film grain, restrained premium colour grading, natural
-    fluid movement
+  narration_wpm: 190
+  bangla_narration_wpm: 155
+  duration_tolerance_s: 2.0
+  duration_tolerance_ratio: 0.04
+  style: cinematic documentary photography, natural skin tones, realistic anatomy, crisp subject detail, balanced exposure, soft filmic contrast, no oversharpening
+  style_video: Photoreal live-action documentary cinema, natural skin tones and anatomy, physically plausible lighting, stable exposure, crisp focal subject, subtle film texture, realistic motion, no artificial glow
   music: true
-  music_volume: 1
+  music_volume: 0.5
   end_screen:
     enabled: true
     channel: Truth Unboxed
@@ -85,7 +98,11 @@ video:
     seconds: 4
 subtitles:
   font: Arial
+  font_bangla: Nirmala UI
   words_per_cue: 4
+  words_per_cue_bangla: 6
+  max_chars_per_line: 34
+  max_chars_per_line_bangla: 23
   uppercase: false
 formats:
   shorts:

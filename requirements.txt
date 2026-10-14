@@ -2,4 +2,6 @@ requests
 pyyaml
 feedparser
 trafilatura
-edge-tts
+edge-tts>=7.2.8
+gTTS>=2.5.4
+flask
